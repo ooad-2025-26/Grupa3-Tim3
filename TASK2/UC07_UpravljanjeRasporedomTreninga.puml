@@ -1,0 +1,60 @@
+@startuml UpravljanjeRasporedomTreninga
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+title UC07: Upravljanje rasporedom grupnih treninga
+
+' Akteri
+actor "Trener" as Trener
+actor "Administrator" as Admin
+
+rectangle "Upravljanje rasporedom grupnih treninga" {
+    usecase "Kreiranje grupnog\ntreninga" as UC7_1
+    usecase "Pregled rasporeda\ntreninga" as UC7_2
+    usecase "Ažuriranje treninga" as UC7_3
+    usecase "Brisanje treninga" as UC7_4
+    usecase "Unos detalja treninga" as UC7_5
+    usecase "Provjera vremenskog\npreklapanja" as UC7_6
+    usecase "Dodjela trenera\ntreningu" as UC7_7
+    usecase "Pregled rasporeda\nsvih trenera" as UC7_8
+}
+
+' Veze trenera
+Trener --> UC7_1
+Trener --> UC7_2
+Trener --> UC7_3
+Trener --> UC7_4
+
+' Veze administratora
+Admin --> UC7_2
+Admin --> UC7_8
+
+' Include veze
+UC7_1 ..> UC7_5 : <<include>>
+UC7_1 ..> UC7_6 : <<include>>
+UC7_1 ..> UC7_7 : <<include>>
+UC7_3 ..> UC7_6 : <<include>>
+
+note right of UC7_5
+  Detalji treninga:
+  - Naziv
+  - Opis
+  - Maksimalni kapacitet
+  - Datum i vrijeme
+  - Trajanje
+  - Dodijeljeni trener
+end note
+
+note right of UC7_6
+  Sistem onemogućava kreiranje
+  treninga koji se vremenski
+  preklapaju za istog trenera
+end note
+
+note bottom of UC7_8
+  Administrator može pregledati
+  raspored svih trenera
+end note
+
+@enduml
