@@ -1,0 +1,80 @@
+@startuml FitManagerSistem
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+title Dijagram slučajeva upotrebe - FitManager Sistem
+
+' Definicija aktera
+actor "Član teretane" as Clan
+actor "Trener" as Trener
+actor "Administrator" as Admin
+actor "Email servis" as EmailServis
+actor "QR čitač" as QRCitac
+
+' Definicija sistema
+rectangle "FitManager - Sistem za upravljanje teretanom" {
+    ' Registracija i upravljanje članovima
+    usecase "Registracija člana" as UC1
+    usecase "Upravljanje profilom" as UC2
+    usecase "Generisanje QR koda" as UC3
+    
+    ' Kupovina i upravljanje članarinama
+    usecase "Kupovina članarine" as UC4
+    usecase "Upravljanje članarinama" as UC5
+    usecase "Konfiguracija cijena" as UC6
+    
+    ' Rezervacija grupnih treninga
+    usecase "Pregled rasporeda\ntreninga" as UC7
+    usecase "Rezervacija grupnog\ntreninga" as UC8
+    usecase "Otkazivanje rezervacije" as UC9
+    
+    ' Automatsko obavještavanje
+    usecase "Automatsko obavještavanje\no isteku članarine" as UC10
+    
+    ' Generisanje statistike
+    usecase "Generisanje statistike\ni izvještaja" as UC11
+    
+    ' Evidencija dolazaka
+    usecase "Evidencija dolazaka\nputem QR koda" as UC12
+    
+    ' Upravljanje rasporedom
+    usecase "Upravljanje rasporedom\ngrupnih treninga" as UC13
+    
+    ' Preporuka plana treninga
+    usecase "Preporuka plana\ntreninga" as UC14
+}
+
+' Veze člana
+Clan --> UC1
+Clan --> UC2
+Clan --> UC4
+Clan --> UC7
+Clan --> UC8
+Clan --> UC9
+Clan --> UC12
+Clan --> UC14
+
+' Veze trenera
+Trener --> UC7
+Trener --> UC13
+Trener --> UC14
+
+' Veze administratora
+Admin --> UC1
+Admin --> UC2
+Admin --> UC5
+Admin --> UC6
+Admin --> UC10
+Admin --> UC11
+Admin --> UC13
+
+' Veze vanjskih sistema
+UC10 --> EmailServis
+UC12 --> QRCitac
+
+' Include veze
+UC1 ..> UC3 : <<include>>
+UC8 ..> UC7 : <<include>>
+
+@enduml
