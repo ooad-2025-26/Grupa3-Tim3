@@ -1,0 +1,58 @@
+@startuml EvidencijaDolazakaQR
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+title UC06: Evidencija dolazaka putem QR koda
+
+' Akteri
+actor "Član teretane" as Clan
+actor "QR čitač\n(vanjski uređaj)" as QRCitac
+
+rectangle "Evidencija dolazaka putem QR koda" {
+    usecase "Skeniranje QR koda" as UC6_1
+    usecase "Validacija QR koda" as UC6_2
+    usecase "Provjera aktivne\nčlanarine" as UC6_3
+    usecase "Evidentiranje dolaska" as UC6_4
+    usecase "Odbijanje ulaza" as UC6_5
+    usecase "Prikaz poruke o\nneaktivnoj članarini" as UC6_6
+    usecase "Ručni unos koda" as UC6_7
+    usecase "Prikaz potvrde\ndolaska" as UC6_8
+}
+
+' Veze člana
+Clan --> UC6_1
+
+' Veze QR čitača
+UC6_1 --> QRCitac
+
+' Include veze
+UC6_1 ..> UC6_2 : <<include>>
+UC6_2 ..> UC6_3 : <<include>>
+UC6_3 ..> UC6_4 : <<include>>\n[članarina aktivna]
+UC6_4 ..> UC6_8 : <<include>>
+
+' Extend veze
+UC6_1 <.. UC6_7 : <<extend>>\n[ako skeniranje ne radi]
+UC6_3 <.. UC6_5 : <<extend>>\n[članarina neaktivna]
+UC6_5 ..> UC6_6 : <<include>>
+
+note right of UC6_1
+  Simulacija QR čitača putem:
+  - Web kamere
+  - Ručnog unosa koda
+end note
+
+note right of UC6_4
+  Evidentira se:
+  - ID člana
+  - Datum i vrijeme dolaska
+end note
+
+note bottom of UC6_5
+  Ukoliko članarina nije
+  aktivna, sistem odbija
+  ulaz i prikazuje poruku
+end note
+
+@enduml
