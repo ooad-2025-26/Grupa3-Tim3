@@ -1,0 +1,51 @@
+@startuml AD03_RezervacijaGrupnogTreninga
+title Dijagram aktivnosti - Rezervacija grupnog treninga
+
+|Član teretane|
+start
+:Pokretanje opcije za pregled\nrasporeda treninga;
+
+|Sistem|
+:Prikaz liste dostupnih\ngrupnih treninga;
+
+|Član teretane|
+:Odabir željenog treninga;
+
+|Sistem|
+:Prikaz detalja treninga\n(naziv, vrijeme, trener,\nslobodna mjesta);
+
+|Član teretane|
+:Potvrda rezervacije;
+
+|Sistem|
+if (Član ima aktivnu članarinu?) then (Da)
+  if (Ima slobodnih mjesta?) then (Da)
+    :Kreiranje rezervacije;
+    :Umanjenje broja slobodnih mjesta;
+    :Prikaz potvrde rezervacije;
+  else (Ne)
+    :Prikaz poruke o\npopunjenosti treninga;
+    :Predlaganje alternativnih termina;
+    |Član teretane|
+    if (Bira drugi termin?) then (Da)
+      :Odabir drugog termina;
+    else (Ne)
+      :Odustajanje od rezervacije;
+      end
+    endif
+  endif
+else (Ne)
+  :Prikaz poruke o\nneaktivnoj članarini;
+  :Ponuda opcije kupovine članarine;
+  |Član teretane|
+  if (Kupuje članarinu?) then (Da)
+    :Kupovina članarine;
+    note right: Prelazak na UC kupovine
+  else (Ne)
+    :Odustajanje od rezervacije;
+    end
+  endif
+endif
+stop
+
+@enduml

@@ -1,0 +1,35 @@
+@startuml
+title Dijagram aktivnosti - Otkazivanje rezervacije
+
+|Član teretane|
+start
+:Pokretanje opcije za pregled\nsvojih rezervacija;
+
+|Sistem|
+:Prikaz liste aktivnih rezervacija;
+
+|Član teretane|
+:Odabir rezervacije za otkazivanje;
+
+|Sistem|
+:Prikaz detalja rezervacije;
+
+|Član teretane|
+:Potvrda otkazivanja;
+
+|Sistem|
+:Provjera vremena do početka;
+if (Do početka više od 2 sata?) then (Da)
+  :Brisanje rezervacije;
+  :Ažuriranje broja slobodnih\nmjesta na treningu;
+  :Prikaz potvrde otkazivanja;
+else (Ne)
+  :Prikaz poruke da otkazivanje\nnije moguće;
+  note right: Manje od 2 sata do početka
+  |Član teretane|
+  :Potvrđivanje primanja poruke;
+  |Sistem|
+  :Vraćanje na listu rezervacija;
+endif
+stop
+@enduml

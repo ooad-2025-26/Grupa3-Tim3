@@ -1,0 +1,38 @@
+@startuml AD08_GenerisanjeStatistike
+title Dijagram aktivnosti - Generisanje statistike i izvještaja
+
+|Administrator|
+start
+:Pokretanje opcije za\ngenerisanje izvještaja;
+
+|Sistem|
+:Prikaz opcija za tip izvještaja;
+
+|Administrator|
+:Odabir tipa izvještaja\n(prihodi/posjete/treninzi);
+:Odabir vremenskog perioda\n(datum od - datum do);
+:Potvrda parametara;
+
+|Sistem|
+:Provjera vremenskog perioda;
+if (Postoje podaci za period?) then (Da)
+  :Dohvaćanje podataka iz baze;
+  :Prikaz rezultata tabelarno;
+  
+  |Administrator|
+  if (Potreban grafički prikaz?) then (Da)
+    :Odabir grafičkog prikaza;
+    |Sistem|
+    :Generisanje grafikona;
+    :Prikaz grafikona;
+  else (Ne)
+    :Pregled tabelarnih rezultata;
+  endif
+else (Ne)
+  :Prikaz poruke da nema\npodataka za period;
+  |Administrator|
+  :Izmjena perioda ili tipa;
+endif
+stop
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml AD12_PregledHistorijeDolazaka
+title Dijagram aktivnosti - Pregled historije dolazaka
+
+|Član teretane|
+start
+:Otvaranje svog profila;
+:Odabir opcije za pregled\nhistorije dolazaka;
+
+|Sistem|
+:Dohvaćanje svih evidentiranih\ndolazaka člana;
+
+if (Postoje evidentirani dolasci?) then (Da)
+  :Prikaz liste dolazaka\nsa datumima i vremenima;
+  
+  |Član teretane|
+  if (Filtriranje po periodu?) then (Da)
+    :Odabir vremenskog perioda;
+    |Sistem|
+    :Filtriranje dolazaka;
+    :Prikaz filtriranih dolazaka;
+  else (Ne)
+    :Pregled svih dolazaka;
+  endif
+else (Ne)
+  :Prikaz poruke da nema\nevidentiranih dolazaka;
+endif
+stop
+
+@enduml

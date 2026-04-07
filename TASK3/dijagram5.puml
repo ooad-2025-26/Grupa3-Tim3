@@ -1,0 +1,22 @@
+@startuml AD05_AutomatskoObavjestavanje
+title Dijagram aktivnosti - Automatsko obavještavanje o isteku članarine
+
+|Sistem|
+start
+:Pokretanje periodične provjere\n(jednom dnevno);
+:Dohvaćanje svih aktivnih članarina;
+:Identifikacija članarina koje\nističu u narednih 7 dana;
+
+if (Postoje članarine za obavještavanje?) then (Da)
+  while (Za svaku članarinu) is (Ima još)
+    :Priprema email obavještenja;
+    :Slanje email-a članu/
+    :Evidentiranje slanja;
+  endwhile (Sve obrađeno)
+  :Završavanje ciklusa provjere;
+else (Ne)
+  :Završavanje ciklusa\n(nema članarina);
+endif
+stop
+
+@enduml

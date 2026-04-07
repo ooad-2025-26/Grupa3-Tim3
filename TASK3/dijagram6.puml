@@ -1,0 +1,33 @@
+@startuml AD06_EvidencijaDolazakaQR
+title Dijagram aktivnosti - Evidencija dolazaka putem QR koda
+
+|Član teretane|
+start
+:Skeniranje QR koda\nna ulazu u teretanu;
+
+|QR čitač|
+:Prijem QR koda;
+:Slanje podataka sistemu;
+
+|Sistem|
+if (QR kod validan?) then (Da)
+  :Identifikacija člana;
+  if (Član ima aktivnu članarinu?) then (Da)
+    :Evidentiranje dolaska\nsa tačnim vremenom;
+    :Prikaz potvrde ulaska;
+    |Član teretane|
+    :Ulaz u teretanu omogućen;
+  else (Ne)
+    :Odbijanje ulaza;
+    :Prikaz poruke o\nneaktivnoj članarini;
+    |Član teretane|
+    :Potrebna kupovina/obnova članarine;
+  endif
+else (Ne)
+  :Prikaz poruke o\nnevalidnom kodu;
+  |Član teretane|
+  :Unos podataka;
+endif
+stop
+
+@enduml
