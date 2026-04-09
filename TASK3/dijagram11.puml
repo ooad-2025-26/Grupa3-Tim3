@@ -1,0 +1,28 @@
+@startuml AD11_KonfiguracijaCijenaClanarina
+title Dijagram aktivnosti - Konfiguracija cijena članarina
+
+|Administrator|
+start
+:Pokretanje opcije za\nkonfiguraciju cijena;
+
+|Sistem|
+:Prikaz trenutnih cijena\nsvih tipova članarina;
+
+|Administrator|
+:Odabir tipa članarine\n(mjesečna/kvartalna/godišnja);
+:Unos nove cijene;
+:Potvrda izmjene;
+
+|Sistem|
+if (Cijena validna?) then (Da)
+  :Ažuriranje cijene u sistemu;
+  :Prikaz potvrde izmjene;
+  note right: Nove kupovine koriste novu cijenu
+else (Ne)
+  :Prikaz poruke o grešci\n(negativna cijena ili nula);
+  |Administrator|
+  :Ispravka cijene;
+endif
+stop
+
+@enduml

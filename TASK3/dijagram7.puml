@@ -1,0 +1,38 @@
+@startuml AD07_KreiranjeGrupnogTreninga
+title Dijagram aktivnosti - Kreiranje grupnog treninga
+
+|Trener|
+start
+:Pokretanje opcije za kreiranje\nnovog treninga;
+
+|Sistem|
+:Prikaz forme za unos\ndetalja treninga;
+
+|Trener|
+:Unos naziva treninga;
+:Unos opisa treninga;
+:Unos maksimalnog kapaciteta;
+:Odabir datuma i vremena;
+:Unos trajanja treninga;
+
+|Sistem|
+if (Podaci validni?) then (Da)
+  if (Vremensko preklapanje?) then (Ne)
+    :Kreiranje treninga;
+    :Dodjela treninga treneru;
+    :Prikaz potvrde kreiranja;
+    stop
+  else (Da)
+    :Prikaz poruke o preklapanju;
+    |Trener|
+    :Izmjena datuma/vremena;
+    end
+  endif
+else (Ne)
+  :Prikaz poruke o grešci;
+  |Trener|
+  :Ispravka podataka;
+  end
+endif
+
+@enduml

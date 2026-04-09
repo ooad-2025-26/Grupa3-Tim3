@@ -1,0 +1,39 @@
+@startuml AD10_AzuriranjeProfilaClan
+title Dijagram aktivnosti - Ažuriranje profila člana
+
+|Korisnik|
+note right: Korisnik = Član ili Administrator
+start
+:Otvaranje profila člana;
+
+|Sistem|
+:Prikaz trenutnih podataka profila;
+
+|Korisnik|
+:Odabir opcije za uređivanje;
+
+|Sistem|
+:Prikaz forme sa trenutnim podacima;
+
+|Korisnik|
+:Izmjena željenih podataka;
+:Potvrda izmjena;
+
+|Sistem|
+if (Podaci validni?) then (Da)
+  if (Email već postoji?) then (Ne)
+    :Ažuriranje profila u bazi;
+    :Prikaz potvrde ažuriranja;
+  else (Da)
+    :Prikaz poruke da\nemail već postoji;
+    |Korisnik|
+    :Unos drugog email-a;
+  endif
+else (Ne)
+  :Prikaz poruke o grešci;
+  |Korisnik|
+  :Ispravka podataka;
+endif
+stop
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+title Dijagram aktivnosti - Preporuka plana treninga
+
+|Član teretane|
+start
+:Pokretanje opcije za\npreporuku plana treninga;
+
+|Sistem|
+:Prikaz forme za unos\nciljeva i parametara;
+
+|Član teretane|
+:Odabir fitness cilja\n(mršavljenje/jačanje/izdržljivost);
+:Unos parametara:\ntežina, visina, godine;
+:Potvrda unosa;
+
+|Sistem|
+:Izračunavanje BMI;
+:Određivanje kategorije\n(pothranjen/normalan/\nprekomjeran/gojazan);
+:Dohvaćanje historije dolazaka;
+
+if (Broj dolazaka < 10?) then (Da)
+  :Intenzitet: POČETNIK;
+  :Plan sa lakšim treninzima;
+else (Ne)
+  if (Broj dolazaka > 50?) then (Da)
+    :Intenzitet: NAPREDNI;
+    :Plan sa zahtjevnijim treninzima;
+  else (Ne)
+    :Intenzitet: SREDNJI;
+    :Plan sa srednjim treninzima;
+  endif
+endif
+
+:Filtriranje treninga po tipu;
+:Generisanje sedmičnog plana;
+:Prikaz personaliziranog plana;
+
+stop
+@enduml
