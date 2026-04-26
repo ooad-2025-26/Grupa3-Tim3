@@ -1,0 +1,372 @@
+@startuml FitManager_DomenskiModel
+title FitManager - dijagram klasa domenskog modela
+
+!pragma layout smetana
+left to right direction
+hide circle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam wrapWidth 170
+skinparam nodesep 55
+skinparam ranksep 55
+skinparam class {
+  BackgroundColor #F8FBFF
+  BorderColor #315A7D
+  ArrowColor #315A7D
+  FontName Segoe UI
+  FontSize 12
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #A6B5C4
+  FontName Segoe UI
+}
+
+package "Korisnici" as P_Korisnici {
+  abstract class Korisnik {
+    -id: Int
+    -email: String
+    -korisnickoIme: String
+    -uloga: UlogaKorisnika
+    +azurirajEmail(email: String): void
+  }
+
+  class Clan {
+    -ime: String
+    -prezime: String
+    -telefon: String
+    -datumRodjenja: DateTime
+    -datumRegistracije: DateTime
+    +imaAktivnuClanarinu(): Bool
+    +azurirajProfil(podaci: ProfilClana): void
+  }
+
+  class Trener {
+    -ime: String
+    -prezime: String
+    +imaPreklapanje(termin: Termin): Bool
+  }
+
+  class Administrator {
+    +konfigurisiCijenu(tipId: Int, cijena: Decimal): void
+  }
+
+  class QRKod {
+    -id: Int
+    -kod: String
+    -datumGenerisanja: DateTime
+    -aktivan: Bool
+    +deaktiviraj(): void
+  }
+}
+
+package "Clanarine" as P_Clanarine {
+  class TipClanarine {
+    -id: Int
+    -naziv: TipClanarineNaziv
+    -trajanjeDana: Int
+    -cijena: Decimal
+    +promijeniCijenu(cijena: Decimal): void
+  }
+
+  class Clanarina {
+    -id: Int
+    -datumPocetka: DateTime
+    -datumIsteka: DateTime
+    -cijena: Decimal
+    -status: StatusClanarine
+    -obavjestenjePoslano: Bool
+    +aktivnaNa(datum: DateTime): Bool
+    +oznaciObavijestena(): void
+    +otkazi(): void
+  }
+}
+
+package "Treninzi i rezervacije" as P_Treninzi {
+  class GrupniTrening {
+    -id: Int
+    -naziv: String
+    -opis: String
+    -maksKapacitet: Int
+    -slobodnaMjesta: Int
+    -datumVrijeme: DateTime
+    -trajanje: Int
+    -tipTreninga: TipTreninga
+    +imaSlobodnihMjesta(): Bool
+    +rezervisiMjesto(): void
+    +oslobodiMjesto(): void
+    +preklapaSeSa(termin: Termin): Bool
+  }
+
+  class Rezervacija {
+    -id: Int
+    -datumKreiranja: DateTime
+    -status: StatusRezervacije
+    +aktivna(): Bool
+    +otkazi(vrijeme: DateTime): void
+  }
+
+  class Dolazak {
+    -id: Int
+    -vrijemeDolaska: DateTime
+    +registrovanNaDan(datum: DateTime): Bool
+  }
+}
+
+package "Planovi, izvjestaji i obavjestenja" as P_Poslovno {
+  class PlanTreninga {
+    -id: Int
+    -fitnessCilj: FitnessCilj
+    -bmi: Decimal
+    -bmiKategorija: BmiKategorija
+    -intenzitet: Intenzitet
+    -sedmicniPlan: String
+    -datumKreiranja: DateTime
+    +azurirajIntenzitet(intenzitet: Intenzitet): void
+  }
+
+  class Izvjestaj {
+    -id: Int
+    -tipIzvjestaja: TipIzvjestaja
+    -datumOd: DateTime
+    -datumDo: DateTime
+    -datumGenerisan: DateTime
+    -sadrzaj: String
+    +pokrivaPeriod(datum: DateTime): Bool
+  }
+
+  class EmailObavjestenje {
+    -id: Int
+    -datumSlanja: DateTime
+    -status: StatusObavjestenja
+    -sadrzaj: String
+    -pokusajSlanja: Int
+    +oznaciPoslano(): void
+    +oznaciGresku(): void
+  }
+}
+
+package "Enumeracije" as P_Enum {
+  enum UlogaKorisnika {
+    CLAN
+    TRENER
+    ADMINISTRATOR
+  }
+  enum TipClanarineNaziv {
+    MJESECNA
+    KVARTALNA
+    GODISNJA
+  }
+  enum StatusClanarine {
+    AKTIVNA
+    ISTEKLA
+    OTKAZANA
+  }
+  enum StatusRezervacije {
+    AKTIVNA
+    OTKAZANA
+  }
+  enum StatusObavjestenja {
+    POSLANO
+    GRESKA
+    NA_CEKANJU
+  }
+  enum TipTreninga {
+    KARDIO
+    SNAGA
+    JOGA
+    PILATES
+  }
+  enum TipIzvjestaja {
+    PRIHODI
+    POSJETE
+    TRENINZI
+  }
+  enum FitnessCilj {
+    MRSAVLJENJE
+    JACANJE
+    IZDRZLJIVOST
+  }
+  enum BmiKategorija {
+    POTHRANJEN
+    NORMALAN
+    PREKOMJERAN
+    GOJAZAN
+  }
+  enum Intenzitet {
+    POCETNIK
+    SREDNJI
+    NAPREDNI
+  }
+}
+
+Korisnik <|-- Clan
+Korisnik <|-- Trener
+Korisnik <|-- Administrator
+
+Clan "1" *-- "1" QRKod : posjeduje
+Clan "1" -- "0..*" Clanarina : kupuje
+TipClanarine "1" -- "0..*" Clanarina : definise
+Clan "1" -- "0..*" Rezervacija : pravi
+GrupniTrening "1" -- "0..*" Rezervacija : prima
+Trener "1" -- "0..*" GrupniTrening : vodi
+Clan "1" -- "0..*" Dolazak : ima
+Clan "1" -- "0..*" PlanTreninga : dobija
+Clanarina "1" -- "0..*" EmailObavjestenje : pokrece
+Administrator "1" -- "0..*" Izvjestaj : generise
+
+note bottom of P_Enum
+  Enumeracije su prikazane odvojeno radi preglednosti.
+  Tipovi su navedeni direktno u atributima klasa.
+end note
+
+@enduml
+
+@startuml FitManager_SOLIDApstrakcije
+title FitManager - servisne apstrakcije za ispunjavanje SOLID principa
+
+!pragma layout smetana
+top to bottom direction
+hide circle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam wrapWidth 170
+skinparam nodesep 55
+skinparam ranksep 45
+skinparam class {
+  BackgroundColor #F8FBFF
+  BorderColor #315A7D
+  ArrowColor #315A7D
+  FontName Segoe UI
+  FontSize 12
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #A6B5C4
+  FontName Segoe UI
+}
+
+package "Upravljanje clanovima i dolascima" as C_Clan {
+  class RegistracijaClanaService {
+    +registrujClana(podaci: ProfilClana): Clan
+  }
+  class EvidencijaDolazakaService {
+    +evidentirajDolazak(qrKod: String): Dolazak
+  }
+  interface IClanRepository {
+    +pronadjiPoId(id: Int): Clan
+    +pronadjiPoEmail(email: String): Clan
+    +sacuvaj(clan: Clan): void
+  }
+  interface IQrKodGenerator {
+    +generisiZaClana(clan: Clan): QRKod
+  }
+  interface IDolazakRepository {
+    +sacuvaj(dolazak: Dolazak): void
+    +brojDolazaka(clanId: Int): Int
+  }
+  class SqlClanRepository
+  class StandardniQrKodGenerator
+  class SqlDolazakRepository
+
+  RegistracijaClanaService ..> IClanRepository
+  RegistracijaClanaService ..> IQrKodGenerator
+  EvidencijaDolazakaService ..> IClanRepository
+  EvidencijaDolazakaService ..> IDolazakRepository
+  SqlClanRepository ..|> IClanRepository
+  StandardniQrKodGenerator ..|> IQrKodGenerator
+  SqlDolazakRepository ..|> IDolazakRepository
+}
+
+package "Clanarine, treninzi i rezervacije" as C_Treninzi {
+  class ClanarinaService {
+    +kupiClanarinu(clanId: Int, tipId: Int): Clanarina
+    +konfigurisiCijenu(tipId: Int, cijena: Decimal): void
+  }
+  class RezervacijaService {
+    +rezervisi(clanId: Int, treningId: Int): Rezervacija
+    +otkazi(rezervacijaId: Int): void
+  }
+  class TreningService {
+    +kreirajTrening(zahtjev: TreningZahtjev): GrupniTrening
+  }
+  interface IClanarinaRepository {
+    +aktivnaZaClana(clanId: Int): Clanarina
+    +sacuvaj(clanarina: Clanarina): void
+    +clanarinePredIstekom(dani: Int): List<Clanarina>
+  }
+  interface ITreningRepository {
+    +pronadjiPoId(id: Int): GrupniTrening
+    +treninziTrenera(trenerId: Int): List<GrupniTrening>
+    +sacuvaj(trening: GrupniTrening): void
+  }
+  interface IRezervacijaRepository {
+    +aktivneZaClana(clanId: Int): List<Rezervacija>
+    +sacuvaj(rezervacija: Rezervacija): void
+  }
+  class SqlClanarinaRepository
+  class SqlTreningRepository
+  class SqlRezervacijaRepository
+
+  ClanarinaService ..> IClanarinaRepository
+  RezervacijaService ..> IRezervacijaRepository
+  RezervacijaService ..> ITreningRepository
+  RezervacijaService ..> IClanarinaRepository
+  TreningService ..> ITreningRepository
+  SqlClanarinaRepository ..|> IClanarinaRepository
+  SqlTreningRepository ..|> ITreningRepository
+  SqlRezervacijaRepository ..|> IRezervacijaRepository
+}
+
+package "Obavjestenja, izvjestaji i planovi" as C_Izvjestaji {
+  class ObavjestavanjeClanarinaService {
+    +posaljiObavjestenjaOIsteku(): void
+  }
+  class IzvjestajService {
+    +generisi(tip: TipIzvjestaja, period: Period): Izvjestaj
+  }
+  class PlanTreningaService {
+    +generisiPlan(clanId: Int, zahtjev: PlanZahtjev): PlanTreninga
+  }
+  interface IEmailGateway {
+    +posalji(primalac: String, sadrzaj: String): Bool
+  }
+  interface IStatistikaStrategija {
+    +generisi(period: Period): String
+  }
+  interface IPlanTreningaStrategija {
+    +generisi(zahtjev: PlanZahtjev): PlanTreninga
+  }
+  class SmtpEmailGateway
+  class PrihodiStrategija
+  class PosjeteStrategija
+  class PopularnostTreningaStrategija
+  class MrsavljenjePlanStrategija
+  class JacanjePlanStrategija
+  class IzdrzljivostPlanStrategija
+
+  ObavjestavanjeClanarinaService ..> IEmailGateway
+  IzvjestajService ..> IStatistikaStrategija
+  PlanTreningaService ..> IPlanTreningaStrategija
+  SmtpEmailGateway ..|> IEmailGateway
+  PrihodiStrategija ..|> IStatistikaStrategija
+  PosjeteStrategija ..|> IStatistikaStrategija
+  PopularnostTreningaStrategija ..|> IStatistikaStrategija
+  MrsavljenjePlanStrategija ..|> IPlanTreningaStrategija
+  JacanjePlanStrategija ..|> IPlanTreningaStrategija
+  IzdrzljivostPlanStrategija ..|> IPlanTreningaStrategija
+}
+
+note bottom
+  SRP: domenske klase cuvaju stanje, servisi koordiniraju slucajeve upotrebe, repozitoriji cuvaju podatke.
+  OCP: izvjestaji i planovi se prosiruju novim strategijama bez izmjene servisa.
+  LSP: implementacije repozitorija/gatewaya/strategija zamjenjuju svoje interfejse.
+  ISP: interfejsi su razdvojeni po klijentima i odgovornostima.
+  DIP: servisi zavise od apstrakcija, a ne od SQL/SMTP konkretnih klasa.
+end note
+
+@enduml
