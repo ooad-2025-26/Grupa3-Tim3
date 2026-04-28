@@ -27,6 +27,7 @@ skinparam package {
 package "Korisnici" as P_Korisnici {
   abstract class Korisnik {
     -id: Int
+    -idClanarine:int
     -email: String
     -korisnickoIme: String
     -uloga: UlogaKorisnika
@@ -101,7 +102,7 @@ package "Treninzi i rezervacije" as P_Treninzi {
   }
 
   class Rezervacija {
-    -id: Int
+    -idGrupnogTreninga: Int
     -datumKreiranja: DateTime
     -status: StatusRezervacije
     +aktivna(): Bool
