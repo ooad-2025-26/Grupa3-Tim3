@@ -1,0 +1,354 @@
+@startuml FitManager_MVC_DijagramKlasa
+title FitManager - MVC dijagram klasa i DataContext
+
+!pragma layout smetana
+left to right direction
+hide circle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam wrapWidth 160
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam class {
+  BackgroundColor #F8FBFF
+  BorderColor #315A7D
+  ArrowColor #315A7D
+  FontName Segoe UI
+  FontSize 11
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #A6B5C4
+  FontName Segoe UI
+}
+
+package "Model" as P_Model {
+  abstract class Korisnik {
+    +Id: int
+    +IdClanarine: int?
+    +Email: string
+    +KorisnickoIme: string
+    +Uloga: UlogaKorisnika
+    +AzurirajEmail(email: string): void
+  }
+
+  class Clan {
+    +Ime: string
+    +Prezime: string
+    +Telefon: string
+    +DatumRodjenja: DateTime
+    +DatumRegistracije: DateTime
+    +ImaAktivnuClanarinu(): bool
+    +AzurirajProfil(podaci: ProfilClana): void
+  }
+
+  class Trener {
+    +Ime: string
+    +Prezime: string
+    +ImaPreklapanje(termin: Termin): bool
+  }
+
+  class Administrator {
+    +KonfigurisiCijenu(tipClanarine: TipClanarine, cijena: decimal): void
+  }
+
+  class QRKod {
+    +Id: int
+    +Kod: string
+    +DatumGenerisanja: DateTime
+    +Aktivan: bool
+    +ClanId: int
+    +Deaktiviraj(): void
+  }
+
+  class TipClanarine {
+    +Id: int
+    +Naziv: TipClanarineNaziv
+    +TrajanjeDana: int
+    +Cijena: decimal
+    +PromijeniCijenu(cijena: decimal): void
+  }
+
+  class Clanarina {
+    +Id: int
+    +DatumPocetka: DateTime
+    +DatumIsteka: DateTime
+    +Cijena: decimal
+    +Status: StatusClanarine
+    +ObavjestenjePoslano: bool
+    +ClanId: int
+    +TipClanarineId: int
+    +AktivnaNa(datum: DateTime): bool
+    +OznaciObavijestena(): void
+    +Otkazi(): void
+  }
+
+  class GrupniTrening {
+    +Id: int
+    +Naziv: string
+    +Opis: string
+    +MaksKapacitet: int
+    +SlobodnaMjesta: int
+    +DatumVrijeme: DateTime
+    +Trajanje: int
+    +TipTreninga: TipTreninga
+    +TrenerId: int
+    +ImaSlobodnihMjesta(): bool
+    +RezervisiMjesto(): void
+    +OslobodiMjesto(): void
+    +PreklapaSeSa(termin: Termin): bool
+  }
+
+  class Rezervacija {
+    +ClanId: int
+    +GrupniTreningId: int
+    +DatumKreiranja: DateTime
+    +Status: StatusRezervacije
+    +Aktivna(): bool
+    +Otkazi(vrijeme: DateTime): void
+  }
+
+  class Dolazak {
+    +Id: int
+    +VrijemeDolaska: DateTime
+    +ClanId: int
+    +RegistrovanNaDan(datum: DateTime): bool
+  }
+
+  class PlanTreninga {
+    +Id: int
+    +FitnessCilj: FitnessCilj
+    +Bmi: decimal
+    +BmiKategorija: BmiKategorija
+    +Intenzitet: Intenzitet
+    +SedmicniPlan: string
+    +DatumKreiranja: DateTime
+    +ClanId: int
+    +AzurirajIntenzitet(intenzitet: Intenzitet): void
+  }
+
+  class Izvjestaj {
+    +Id: int
+    +TipIzvjestaja: TipIzvjestaja
+    +DatumOd: DateTime
+    +DatumDo: DateTime
+    +DatumGenerisan: DateTime
+    +Sadrzaj: string
+    +AdministratorId: int
+    +PokrivaPeriod(datum: DateTime): bool
+  }
+
+  class EmailObavjestenje {
+    +Id: int
+    +DatumSlanja: DateTime
+    +Status: StatusObavjestenja
+    +Sadrzaj: string
+    +PokusajSlanja: int
+    +ClanarinaId: int
+    +OznaciPoslano(): void
+    +OznaciGresku(): void
+  }
+}
+
+package "Enumeracije" as P_Enum {
+  enum UlogaKorisnika {
+    CLAN
+    TRENER
+    ADMINISTRATOR
+  }
+  enum TipClanarineNaziv {
+    MJESECNA
+    KVARTALNA
+    GODISNJA
+  }
+  enum StatusClanarine {
+    AKTIVNA
+    ISTEKLA
+    OTKAZANA
+  }
+  enum StatusRezervacije {
+    AKTIVNA
+    OTKAZANA
+  }
+  enum StatusObavjestenja {
+    POSLANO
+    GRESKA
+    NA_CEKANJU
+  }
+  enum TipTreninga {
+    KARDIO
+    SNAGA
+    JOGA
+    PILATES
+  }
+  enum TipIzvjestaja {
+    PRIHODI
+    POSJETE
+    TRENINZI
+  }
+  enum FitnessCilj {
+    MRSAVLJENJE
+    JACANJE
+    IZDRZLJIVOST
+  }
+  enum BmiKategorija {
+    POTHRANJEN
+    NORMALAN
+    PREKOMJERAN
+    GOJAZAN
+  }
+  enum Intenzitet {
+    POCETNIK
+    SREDNJI
+    NAPREDNI
+  }
+}
+
+package "Data" as P_Data {
+  class ApplicationDbContext {
+    +Korisnici: DbSet<Korisnik>
+    +Clanovi: DbSet<Clan>
+    +Treneri: DbSet<Trener>
+    +Administratori: DbSet<Administrator>
+    +QRKodovi: DbSet<QRKod>
+    +TipoviClanarine: DbSet<TipClanarine>
+    +Clanarine: DbSet<Clanarina>
+    +GrupniTreninzi: DbSet<GrupniTrening>
+    +Rezervacije: DbSet<Rezervacija>
+    +Dolasci: DbSet<Dolazak>
+    +PlanoviTreninga: DbSet<PlanTreninga>
+    +Izvjestaji: DbSet<Izvjestaj>
+    +EmailObavjestenja: DbSet<EmailObavjestenje>
+    #OnModelCreating(modelBuilder: ModelBuilder): void
+  }
+}
+
+package "Kontroleri" as P_Controller {
+  class HomeController {
+    +GET /: Index()
+    +GET /Home/Privacy: Privacy()
+    +GET /Home/Error: Error()
+  }
+
+  class ClanoviController {
+    +GET /Clanovi: Index()
+    +GET /Clanovi/Details/{id}: Details(id)
+    +GET /Clanovi/Create: Create()
+    +POST /Clanovi/Create: Create(clan)
+    +GET /Clanovi/Edit/{id}: Edit(id)
+    +POST /Clanovi/Edit/{id}: Edit(id, clan)
+    +GET /Clanovi/QRCode/{id}: QRCode(id)
+  }
+
+  class ClanarineController {
+    +GET /Clanarine: Index()
+    +GET /Clanarine/Kupi: Kupi()
+    +POST /Clanarine/Kupi: Kupi(zahtjev)
+    +POST /Clanarine/Otkazi/{id}: Otkazi(id)
+    +GET /Clanarine/Tipovi: Tipovi()
+    +POST /Clanarine/PromijeniCijenu/{tipId}: PromijeniCijenu(tipId, cijena)
+  }
+
+  class GrupniTreninziController {
+    +GET /GrupniTreninzi/Raspored: Raspored()
+    +GET /GrupniTreninzi/Create: Create()
+    +POST /GrupniTreninzi/Create: Create(trening)
+    +GET /GrupniTreninzi/Edit/{id}: Edit(id)
+    +POST /GrupniTreninzi/Edit/{id}: Edit(id, trening)
+    +POST /GrupniTreninzi/Delete/{id}: Delete(id)
+  }
+
+  class RezervacijeController {
+    +GET /Rezervacije/Moje: Moje()
+    +POST /Rezervacije/Rezervisi/{treningId}: Rezervisi(treningId)
+    +POST /Rezervacije/Otkazi/{treningId}: Otkazi(treningId)
+  }
+
+  class DolasciController {
+    +GET /Dolasci: Index()
+    +POST /Dolasci/QR: EvidentirajQR(qrKod)
+    +GET /Dolasci/Historija/{clanId}: Historija(clanId)
+  }
+
+  class PlanoviTreningaController {
+    +GET /PlanoviTreninga/Preporuka: Preporuka()
+    +POST /PlanoviTreninga/Preporuka: Preporuka(zahtjev)
+    +GET /PlanoviTreninga/Clan/{clanId}: Clan(clanId)
+  }
+
+  class IzvjestajiController {
+    +GET /Izvjestaji: Index()
+    +POST /Izvjestaji/Generisi: Generisi(tip, datumOd, datumDo)
+  }
+
+  class ObavjestenjaController {
+    +POST /Obavjestenja/PosaljiIstekClanarine: PosaljiIstekClanarine()
+  }
+}
+
+package "Pogledi (prazne klase)" as P_View {
+  class HomeIndexView
+  class PrivacyView
+  class ErrorView
+  class ClanoviView
+  class ClanarineView
+  class RasporedTreningaView
+  class RezervacijeView
+  class DolasciView
+  class PlanoviTreningaView
+  class IzvjestajiView
+}
+
+Korisnik <|-- Clan
+Korisnik <|-- Trener
+Korisnik <|-- Administrator
+
+Clan "1" *-- "0..1" QRKod : posjeduje
+Clan "1" -- "0..*" Clanarina : kupuje
+TipClanarine "1" -- "0..*" Clanarina : definise
+Clan "1" -- "0..*" Rezervacija : pravi
+GrupniTrening "1" -- "0..*" Rezervacija : prima
+Trener "1" -- "0..*" GrupniTrening : vodi
+Clan "1" -- "0..*" Dolazak : ima
+Clan "1" -- "0..*" PlanTreninga : dobija
+Clanarina "1" -- "0..*" EmailObavjestenje : pokrece
+Administrator "1" -- "0..*" Izvjestaj : generise
+
+ApplicationDbContext ..> Korisnik
+ApplicationDbContext ..> QRKod
+ApplicationDbContext ..> TipClanarine
+ApplicationDbContext ..> Clanarina
+ApplicationDbContext ..> GrupniTrening
+ApplicationDbContext ..> Rezervacija
+ApplicationDbContext ..> Dolazak
+ApplicationDbContext ..> PlanTreninga
+ApplicationDbContext ..> Izvjestaj
+ApplicationDbContext ..> EmailObavjestenje
+
+ClanoviController ..> ApplicationDbContext
+ClanarineController ..> ApplicationDbContext
+GrupniTreninziController ..> ApplicationDbContext
+RezervacijeController ..> ApplicationDbContext
+DolasciController ..> ApplicationDbContext
+PlanoviTreningaController ..> ApplicationDbContext
+IzvjestajiController ..> ApplicationDbContext
+ObavjestenjaController ..> ApplicationDbContext
+
+HomeController ..> HomeIndexView
+HomeController ..> PrivacyView
+HomeController ..> ErrorView
+ClanoviController ..> ClanoviView
+ClanarineController ..> ClanarineView
+GrupniTreninziController ..> RasporedTreningaView
+RezervacijeController ..> RezervacijeView
+DolasciController ..> DolasciView
+PlanoviTreningaController ..> PlanoviTreningaView
+IzvjestajiController ..> IzvjestajiView
+
+note bottom of P_View
+  Klase pogleda su prazne jer sluze samo za prikaz MVC strukture.
+end note
+
+@enduml
