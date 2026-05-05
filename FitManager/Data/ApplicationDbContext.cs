@@ -7,9 +7,6 @@ namespace FitManager.Data
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
     {
         public DbSet<Korisnik> Korisnici => Set<Korisnik>();
-        public DbSet<Clan> Clanovi => Set<Clan>();
-        public DbSet<Trener> Treneri => Set<Trener>();
-        public DbSet<Administrator> Administratori => Set<Administrator>();
         public DbSet<QRKod> QRKodovi => Set<QRKod>();
         public DbSet<TipClanarine> TipoviClanarine => Set<TipClanarine>();
         public DbSet<Clanarina> Clanarine => Set<Clanarina>();
@@ -36,61 +33,39 @@ namespace FitManager.Data
                     .IsRequired();
                 entity.Property(korisnik => korisnik.Uloga)
                     .HasConversion<int>();
-                entity.HasDiscriminator(korisnik => korisnik.Uloga)
-                    .HasValue<Clan>(UlogaKorisnika.CLAN)
-                    .HasValue<Trener>(UlogaKorisnika.TRENER)
-                    .HasValue<Administrator>(UlogaKorisnika.ADMINISTRATOR);
-            });
-
-            modelBuilder.Entity<Clan>(entity =>
-            {
-                entity.Property(clan => clan.Ime)
+                entity.Property(korisnik => korisnik.Ime)
                     .HasMaxLength(100)
                     .IsRequired();
-                entity.Property(clan => clan.Prezime)
+                entity.Property(korisnik => korisnik.Prezime)
                     .HasMaxLength(100)
                     .IsRequired();
-                entity.Property(clan => clan.Telefon)
+                entity.Property(korisnik => korisnik.Telefon)
                     .HasMaxLength(30);
-                entity.HasOne(clan => clan.QRKod)
+                entity.HasOne(korisnik => korisnik.QRKod)
                     .WithOne(qrKod => qrKod.Clan)
                     .HasForeignKey<QRKod>(qrKod => qrKod.ClanId)
                     .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(clan => clan.Clanarine)
+                entity.HasMany(korisnik => korisnik.Clanarine)
                     .WithOne(clanarina => clanarina.Clan)
                     .HasForeignKey(clanarina => clanarina.ClanId)
                     .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(clan => clan.Rezervacije)
+                entity.HasMany(korisnik => korisnik.Rezervacije)
                     .WithOne(rezervacija => rezervacija.Clan)
                     .HasForeignKey(rezervacija => rezervacija.ClanId)
                     .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(clan => clan.Dolasci)
+                entity.HasMany(korisnik => korisnik.Dolasci)
                     .WithOne(dolazak => dolazak.Clan)
                     .HasForeignKey(dolazak => dolazak.ClanId)
                     .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(clan => clan.PlanoviTreninga)
+                entity.HasMany(korisnik => korisnik.PlanoviTreninga)
                     .WithOne(plan => plan.Clan)
                     .HasForeignKey(plan => plan.ClanId)
                     .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            modelBuilder.Entity<Trener>(entity =>
-            {
-                entity.Property(trener => trener.Ime)
-                    .HasMaxLength(100)
-                    .IsRequired();
-                entity.Property(trener => trener.Prezime)
-                    .HasMaxLength(100)
-                    .IsRequired();
-                entity.HasMany(trener => trener.GrupniTreninzi)
+                entity.HasMany(korisnik => korisnik.GrupniTreninzi)
                     .WithOne(trening => trening.Trener)
                     .HasForeignKey(trening => trening.TrenerId)
                     .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            modelBuilder.Entity<Administrator>(entity =>
-            {
-                entity.HasMany(administrator => administrator.Izvjestaji)
+                entity.HasMany(korisnik => korisnik.Izvjestaji)
                     .WithOne(izvjestaj => izvjestaj.Administrator)
                     .HasForeignKey(izvjestaj => izvjestaj.AdministratorId)
                     .OnDelete(DeleteBehavior.Restrict);
