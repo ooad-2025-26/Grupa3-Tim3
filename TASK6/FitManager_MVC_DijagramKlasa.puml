@@ -24,6 +24,15 @@ skinparam package {
   FontName Segoe UI
 }
 
+legend top right
+  **Legenda boja asocijacija:**
+  <color:#2E8B57>■</color> Interne veze Modela
+  <color:#FF8C00>■</color> Data -> Model
+  <color:#9370DB>■</color> Kontroler -> Model
+  <color:#4682B4>■</color> Kontroler -> Data
+  <color:#CD5C5C>■</color> Kontroler -> Pogled
+endlegend
+
 package "Model" as P_Model {
   class Korisnik {
     +Id: int
@@ -300,57 +309,57 @@ package "Pogledi" as P_View {
   class IzvjestajiView
 }
 
-Korisnik ..> ProfilClana : azurira profil
-GrupniTrening ..> Termin : provjera preklapanja
+Korisnik .[#2E8B57].> ProfilClana : azurira profil
+GrupniTrening .[#2E8B57].> Termin : provjera preklapanja
 
-Korisnik "1" *-- "0..1" QRKod : clan posjeduje
-Korisnik "1" -- "0..*" Clanarina : clan kupuje
-TipClanarine "1" -- "0..*" Clanarina : definise
-Korisnik "1" -- "0..*" Rezervacija : clan pravi
-GrupniTrening "1" -- "0..*" Rezervacija : prima
-Korisnik "1" -- "0..*" GrupniTrening : trener vodi
-Korisnik "1" -- "0..*" Dolazak : clan ima
-Korisnik "1" -- "0..*" PlanTreninga : clan dobija
-Clanarina "1" -- "0..*" EmailObavjestenje : pokrece
-Korisnik "1" -- "0..*" Izvjestaj : administrator generise
+Korisnik "1" *-[#2E8B57]- "0..1" QRKod : clan posjeduje
+Korisnik "1" -[#2E8B57]- "0..*" Clanarina : clan kupuje
+TipClanarine "1" -[#2E8B57]- "0..*" Clanarina : definise
+Korisnik "1" -[#2E8B57]- "0..*" Rezervacija : clan pravi
+GrupniTrening "1" -[#2E8B57]- "0..*" Rezervacija : prima
+Korisnik "1" -[#2E8B57]- "0..*" GrupniTrening : trener vodi
+Korisnik "1" -[#2E8B57]- "0..*" Dolazak : clan ima
+Korisnik "1" -[#2E8B57]- "0..*" PlanTreninga : clan dobija
+Clanarina "1" -[#2E8B57]- "0..*" EmailObavjestenje : pokrece
+Korisnik "1" -[#2E8B57]- "0..*" Izvjestaj : administrator generise
 
-ApplicationDbContext ..> Korisnik
-ApplicationDbContext ..> QRKod
-ApplicationDbContext ..> TipClanarine
-ApplicationDbContext ..> Clanarina
-ApplicationDbContext ..> GrupniTrening
-ApplicationDbContext ..> Rezervacija
-ApplicationDbContext ..> Dolazak
-ApplicationDbContext ..> PlanTreninga
-ApplicationDbContext ..> Izvjestaj
-ApplicationDbContext ..> EmailObavjestenje
+ApplicationDbContext .[#FF8C00].> Korisnik
+ApplicationDbContext .[#FF8C00].> QRKod
+ApplicationDbContext .[#FF8C00].> TipClanarine
+ApplicationDbContext .[#FF8C00].> Clanarina
+ApplicationDbContext .[#FF8C00].> GrupniTrening
+ApplicationDbContext .[#FF8C00].> Rezervacija
+ApplicationDbContext .[#FF8C00].> Dolazak
+ApplicationDbContext .[#FF8C00].> PlanTreninga
+ApplicationDbContext .[#FF8C00].> Izvjestaj
+ApplicationDbContext .[#FF8C00].> EmailObavjestenje
 
-ClanoviController ..> Korisnik
-ClanoviController ..> ProfilClana
-ClanarineController ..> Clanarina
-ClanarineController ..> TipClanarine
-GrupniTreninziController ..> GrupniTrening
-RezervacijeController ..> Rezervacija
-DolasciController ..> Dolazak
-PlanoviTreningaController ..> PlanTreninga
-IzvjestajiController ..> Izvjestaj
-ObavjestenjaController ..> EmailObavjestenje
+ClanoviController .[#9370DB].> Korisnik
+ClanoviController .[#9370DB].> ProfilClana
+ClanarineController .[#9370DB].> Clanarina
+ClanarineController .[#9370DB].> TipClanarine
+GrupniTreninziController .[#9370DB].> GrupniTrening
+RezervacijeController .[#9370DB].> Rezervacija
+DolasciController .[#9370DB].> Dolazak
+PlanoviTreningaController .[#9370DB].> PlanTreninga
+IzvjestajiController .[#9370DB].> Izvjestaj
+ObavjestenjaController .[#9370DB].> EmailObavjestenje
 
-ClanoviController ..> ApplicationDbContext
-ClanarineController ..> ApplicationDbContext
-GrupniTreninziController ..> ApplicationDbContext
-RezervacijeController ..> ApplicationDbContext
-DolasciController ..> ApplicationDbContext
-PlanoviTreningaController ..> ApplicationDbContext
-IzvjestajiController ..> ApplicationDbContext
-ObavjestenjaController ..> ApplicationDbContext
+ClanoviController .[#4682B4].> ApplicationDbContext
+ClanarineController .[#4682B4].> ApplicationDbContext
+GrupniTreninziController .[#4682B4].> ApplicationDbContext
+RezervacijeController .[#4682B4].> ApplicationDbContext
+DolasciController .[#4682B4].> ApplicationDbContext
+PlanoviTreningaController .[#4682B4].> ApplicationDbContext
+IzvjestajiController .[#4682B4].> ApplicationDbContext
+ObavjestenjaController .[#4682B4].> ApplicationDbContext
 
-ClanoviController ..> ClanoviView
-ClanarineController ..> ClanarineView
-GrupniTreninziController ..> RasporedTreningaView
-RezervacijeController ..> RezervacijeView
-DolasciController ..> DolasciView
-PlanoviTreningaController ..> PlanoviTreningaView
-IzvjestajiController ..> IzvjestajiView
+ClanoviController .[#CD5C5C].> ClanoviView
+ClanarineController .[#CD5C5C].> ClanarineView
+GrupniTreninziController .[#CD5C5C].> RasporedTreningaView
+RezervacijeController .[#CD5C5C].> RezervacijeView
+DolasciController .[#CD5C5C].> DolasciView
+PlanoviTreningaController .[#CD5C5C].> PlanoviTreningaView
+IzvjestajiController .[#CD5C5C].> IzvjestajiView
 
 @enduml
