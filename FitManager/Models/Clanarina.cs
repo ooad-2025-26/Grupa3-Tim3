@@ -12,7 +12,6 @@ namespace FitManager.Models
         public Korisnik Clan { get; set; } = null!;
         public int TipClanarineId { get; set; }
         public TipClanarine TipClanarine { get; set; } = null!;
-        public ICollection<EmailObavjestenje> EmailObavjestenja { get; set; } = new List<EmailObavjestenje>();
 
         public bool AktivnaNa(DateTime datum)
         {

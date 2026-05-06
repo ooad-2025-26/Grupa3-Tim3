@@ -199,18 +199,36 @@ namespace FitManager.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DatumRegistracije")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DatumRodjenja")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int?>("IdClanarine")
-                        .HasColumnType("int");
+                    b.Property<string>("Ime")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("KorisnickoIme")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Prezime")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Telefon")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<int>("Uloga")
                         .HasColumnType("int");
@@ -218,10 +236,6 @@ namespace FitManager.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Korisnik", (string)null);
-
-                    b.HasDiscriminator<int>("Uloga");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("FitManager.Models.PlanTreninga", b =>
@@ -297,21 +311,32 @@ namespace FitManager.Data.Migrations
 
             modelBuilder.Entity("FitManager.Models.Rezervacija", b =>
                 {
-                    b.Property<int>("ClanId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("GrupniTreningId")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClanId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DatumKreiranja")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("GrupniTreningId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("ClanId", "GrupniTreningId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClanId");
 
                     b.HasIndex("GrupniTreningId");
+
+                    b.HasIndex("ClanId", "GrupniTreningId")
+                        .IsUnique();
 
                     b.ToTable("Rezervacija", (string)null);
                 });
@@ -543,77 +568,16 @@ namespace FitManager.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FitManager.Models.Administrator", b =>
-                {
-                    b.HasBaseType("FitManager.Models.Korisnik");
-
-                    b.HasDiscriminator().HasValue(2);
-                });
-
-            modelBuilder.Entity("FitManager.Models.Clan", b =>
-                {
-                    b.HasBaseType("FitManager.Models.Korisnik");
-
-                    b.Property<DateTime>("DatumRegistracije")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DatumRodjenja")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Ime")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Prezime")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Telefon")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("FitManager.Models.Trener", b =>
-                {
-                    b.HasBaseType("FitManager.Models.Korisnik");
-
-                    b.Property<string>("Ime")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Prezime")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.ToTable("Korisnik", t =>
-                        {
-                            t.Property("Ime")
-                                .HasColumnName("Trener_Ime");
-
-                            t.Property("Prezime")
-                                .HasColumnName("Trener_Prezime");
-                        });
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("FitManager.Models.Clanarina", b =>
                 {
-                    b.HasOne("FitManager.Models.Clan", "Clan")
-                        .WithMany("Clanarine")
+                    b.HasOne("FitManager.Models.Korisnik", "Clan")
+                        .WithMany()
                         .HasForeignKey("ClanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FitManager.Models.TipClanarine", "TipClanarine")
-                        .WithMany("Clanarine")
+                        .WithMany()
                         .HasForeignKey("TipClanarineId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -625,8 +589,8 @@ namespace FitManager.Data.Migrations
 
             modelBuilder.Entity("FitManager.Models.Dolazak", b =>
                 {
-                    b.HasOne("FitManager.Models.Clan", "Clan")
-                        .WithMany("Dolasci")
+                    b.HasOne("FitManager.Models.Korisnik", "Clan")
+                        .WithMany()
                         .HasForeignKey("ClanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -637,7 +601,7 @@ namespace FitManager.Data.Migrations
             modelBuilder.Entity("FitManager.Models.EmailObavjestenje", b =>
                 {
                     b.HasOne("FitManager.Models.Clanarina", "Clanarina")
-                        .WithMany("EmailObavjestenja")
+                        .WithMany()
                         .HasForeignKey("ClanarinaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -647,8 +611,8 @@ namespace FitManager.Data.Migrations
 
             modelBuilder.Entity("FitManager.Models.GrupniTrening", b =>
                 {
-                    b.HasOne("FitManager.Models.Trener", "Trener")
-                        .WithMany("GrupniTreninzi")
+                    b.HasOne("FitManager.Models.Korisnik", "Trener")
+                        .WithMany()
                         .HasForeignKey("TrenerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -658,8 +622,8 @@ namespace FitManager.Data.Migrations
 
             modelBuilder.Entity("FitManager.Models.Izvjestaj", b =>
                 {
-                    b.HasOne("FitManager.Models.Administrator", "Administrator")
-                        .WithMany("Izvjestaji")
+                    b.HasOne("FitManager.Models.Korisnik", "Administrator")
+                        .WithMany()
                         .HasForeignKey("AdministratorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -669,8 +633,8 @@ namespace FitManager.Data.Migrations
 
             modelBuilder.Entity("FitManager.Models.PlanTreninga", b =>
                 {
-                    b.HasOne("FitManager.Models.Clan", "Clan")
-                        .WithMany("PlanoviTreninga")
+                    b.HasOne("FitManager.Models.Korisnik", "Clan")
+                        .WithMany()
                         .HasForeignKey("ClanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -680,7 +644,7 @@ namespace FitManager.Data.Migrations
 
             modelBuilder.Entity("FitManager.Models.QRKod", b =>
                 {
-                    b.HasOne("FitManager.Models.Clan", "Clan")
+                    b.HasOne("FitManager.Models.Korisnik", "Clan")
                         .WithOne("QRKod")
                         .HasForeignKey("FitManager.Models.QRKod", "ClanId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -691,14 +655,14 @@ namespace FitManager.Data.Migrations
 
             modelBuilder.Entity("FitManager.Models.Rezervacija", b =>
                 {
-                    b.HasOne("FitManager.Models.Clan", "Clan")
-                        .WithMany("Rezervacije")
+                    b.HasOne("FitManager.Models.Korisnik", "Clan")
+                        .WithMany()
                         .HasForeignKey("ClanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FitManager.Models.GrupniTrening", "GrupniTrening")
-                        .WithMany("Rezervacije")
+                        .WithMany()
                         .HasForeignKey("GrupniTreningId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -759,42 +723,9 @@ namespace FitManager.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FitManager.Models.Clanarina", b =>
+            modelBuilder.Entity("FitManager.Models.Korisnik", b =>
                 {
-                    b.Navigation("EmailObavjestenja");
-                });
-
-            modelBuilder.Entity("FitManager.Models.GrupniTrening", b =>
-                {
-                    b.Navigation("Rezervacije");
-                });
-
-            modelBuilder.Entity("FitManager.Models.TipClanarine", b =>
-                {
-                    b.Navigation("Clanarine");
-                });
-
-            modelBuilder.Entity("FitManager.Models.Administrator", b =>
-                {
-                    b.Navigation("Izvjestaji");
-                });
-
-            modelBuilder.Entity("FitManager.Models.Clan", b =>
-                {
-                    b.Navigation("Clanarine");
-
-                    b.Navigation("Dolasci");
-
-                    b.Navigation("PlanoviTreninga");
-
                     b.Navigation("QRKod");
-
-                    b.Navigation("Rezervacije");
-                });
-
-            modelBuilder.Entity("FitManager.Models.Trener", b =>
-                {
-                    b.Navigation("GrupniTreninzi");
                 });
 #pragma warning restore 612, 618
         }

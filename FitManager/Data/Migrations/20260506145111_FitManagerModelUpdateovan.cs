@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FitManager.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FitManagerDomainModel : Migration
+    public partial class FitManagerModelUpdateovan : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,17 +17,14 @@ namespace FitManager.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdClanarine = table.Column<int>(type: "int", nullable: true),
+                    Uloga = table.Column<int>(type: "int", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     KorisnickoIme = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Uloga = table.Column<int>(type: "int", nullable: false),
-                    Ime = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Prezime = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Telefon = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    DatumRodjenja = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DatumRegistracije = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Trener_Ime = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Trener_Prezime = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                    Ime = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Prezime = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Telefon = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    DatumRodjenja = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DatumRegistracije = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -201,6 +198,8 @@ namespace FitManager.Data.Migrations
                 name: "Rezervacija",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ClanId = table.Column<int>(type: "int", nullable: false),
                     GrupniTreningId = table.Column<int>(type: "int", nullable: false),
                     DatumKreiranja = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -208,7 +207,7 @@ namespace FitManager.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rezervacija", x => new { x.ClanId, x.GrupniTreningId });
+                    table.PrimaryKey("PK_Rezervacija", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Rezervacija_GrupniTrening_GrupniTreningId",
                         column: x => x.GrupniTreningId,
@@ -291,6 +290,17 @@ namespace FitManager.Data.Migrations
                 name: "IX_QRKod_Kod",
                 table: "QRKod",
                 column: "Kod",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rezervacija_ClanId",
+                table: "Rezervacija",
+                column: "ClanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rezervacija_ClanId_GrupniTreningId",
+                table: "Rezervacija",
+                columns: new[] { "ClanId", "GrupniTreningId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

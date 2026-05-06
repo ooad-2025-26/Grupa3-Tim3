@@ -2,6 +2,7 @@ namespace FitManager.Models
 {
     public class Rezervacija
     {
+        public int Id { get; set; }
         public int ClanId { get; set; }
         public Korisnik Clan { get; set; } = null!;
         public int GrupniTreningId { get; set; }

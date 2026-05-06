@@ -12,7 +12,6 @@ namespace FitManager.Models
         public TipTreninga TipTreninga { get; set; }
         public int TrenerId { get; set; }
         public Korisnik Trener { get; set; } = null!;
-        public ICollection<Rezervacija> Rezervacije { get; set; } = new List<Rezervacija>();
 
         public bool ImaSlobodnihMjesta()
         {

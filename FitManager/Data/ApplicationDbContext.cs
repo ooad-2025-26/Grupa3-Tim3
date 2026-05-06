@@ -41,34 +41,6 @@ namespace FitManager.Data
                     .IsRequired();
                 entity.Property(korisnik => korisnik.Telefon)
                     .HasMaxLength(30);
-                entity.HasOne(korisnik => korisnik.QRKod)
-                    .WithOne(qrKod => qrKod.Clan)
-                    .HasForeignKey<QRKod>(qrKod => qrKod.ClanId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(korisnik => korisnik.Clanarine)
-                    .WithOne(clanarina => clanarina.Clan)
-                    .HasForeignKey(clanarina => clanarina.ClanId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(korisnik => korisnik.Rezervacije)
-                    .WithOne(rezervacija => rezervacija.Clan)
-                    .HasForeignKey(rezervacija => rezervacija.ClanId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(korisnik => korisnik.Dolasci)
-                    .WithOne(dolazak => dolazak.Clan)
-                    .HasForeignKey(dolazak => dolazak.ClanId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(korisnik => korisnik.PlanoviTreninga)
-                    .WithOne(plan => plan.Clan)
-                    .HasForeignKey(plan => plan.ClanId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(korisnik => korisnik.GrupniTreninzi)
-                    .WithOne(trening => trening.Trener)
-                    .HasForeignKey(trening => trening.TrenerId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(korisnik => korisnik.Izvjestaji)
-                    .WithOne(izvjestaj => izvjestaj.Administrator)
-                    .HasForeignKey(izvjestaj => izvjestaj.AdministratorId)
-                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<QRKod>(entity =>
@@ -80,6 +52,10 @@ namespace FitManager.Data
                     .IsRequired();
                 entity.HasIndex(qrKod => qrKod.Kod)
                     .IsUnique();
+                entity.HasOne(qrKod => qrKod.Clan)
+                    .WithOne(korisnik => korisnik.QRKod)
+                    .HasForeignKey<QRKod>(qrKod => qrKod.ClanId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<TipClanarine>(entity =>
@@ -102,8 +78,12 @@ namespace FitManager.Data
                     .HasColumnType("decimal(18,2)");
                 entity.Property(clanarina => clanarina.Status)
                     .HasConversion<int>();
+                entity.HasOne(clanarina => clanarina.Clan)
+                    .WithMany()
+                    .HasForeignKey(clanarina => clanarina.ClanId)
+                    .OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(clanarina => clanarina.TipClanarine)
-                    .WithMany(tip => tip.Clanarine)
+                    .WithMany()
                     .HasForeignKey(clanarina => clanarina.TipClanarineId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
@@ -119,16 +99,27 @@ namespace FitManager.Data
                     .HasMaxLength(1000);
                 entity.Property(trening => trening.TipTreninga)
                     .HasConversion<int>();
+                entity.HasOne(trening => trening.Trener)
+                    .WithMany()
+                    .HasForeignKey(trening => trening.TrenerId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Rezervacija>(entity =>
             {
                 entity.ToTable("Rezervacija");
-                entity.HasKey(rezervacija => new { rezervacija.ClanId, rezervacija.GrupniTreningId });
+                entity.HasKey(rezervacija => rezervacija.Id);
                 entity.Property(rezervacija => rezervacija.Status)
                     .HasConversion<int>();
+                entity.HasIndex(rezervacija => rezervacija.ClanId);
+                entity.HasIndex(rezervacija => new { rezervacija.ClanId, rezervacija.GrupniTreningId })
+                    .IsUnique();
+                entity.HasOne(rezervacija => rezervacija.Clan)
+                    .WithMany()
+                    .HasForeignKey(rezervacija => rezervacija.ClanId)
+                    .OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(rezervacija => rezervacija.GrupniTrening)
-                    .WithMany(trening => trening.Rezervacije)
+                    .WithMany()
                     .HasForeignKey(rezervacija => rezervacija.GrupniTreningId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
@@ -137,6 +128,10 @@ namespace FitManager.Data
             {
                 entity.ToTable("Dolazak");
                 entity.HasKey(dolazak => dolazak.Id);
+                entity.HasOne(dolazak => dolazak.Clan)
+                    .WithMany()
+                    .HasForeignKey(dolazak => dolazak.ClanId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<PlanTreninga>(entity =>
@@ -153,6 +148,10 @@ namespace FitManager.Data
                     .HasConversion<int>();
                 entity.Property(plan => plan.SedmicniPlan)
                     .HasMaxLength(4000);
+                entity.HasOne(plan => plan.Clan)
+                    .WithMany()
+                    .HasForeignKey(plan => plan.ClanId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Izvjestaj>(entity =>
@@ -163,6 +162,10 @@ namespace FitManager.Data
                     .HasConversion<int>();
                 entity.Property(izvjestaj => izvjestaj.Sadrzaj)
                     .HasMaxLength(4000);
+                entity.HasOne(izvjestaj => izvjestaj.Administrator)
+                    .WithMany()
+                    .HasForeignKey(izvjestaj => izvjestaj.AdministratorId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<EmailObavjestenje>(entity =>
@@ -174,7 +177,7 @@ namespace FitManager.Data
                 entity.Property(obavjestenje => obavjestenje.Sadrzaj)
                     .HasMaxLength(4000);
                 entity.HasOne(obavjestenje => obavjestenje.Clanarina)
-                    .WithMany(clanarina => clanarina.EmailObavjestenja)
+                    .WithMany()
                     .HasForeignKey(obavjestenje => obavjestenje.ClanarinaId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
