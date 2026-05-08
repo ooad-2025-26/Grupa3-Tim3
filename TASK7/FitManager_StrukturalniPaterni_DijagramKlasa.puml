@@ -1,0 +1,135 @@
+@startuml FitManager_StrukturalniPaterni_DijagramKlasa
+title FitManager - strukturalni paterni u procesu rezervacije
+
+!pragma layout smetana
+left to right direction
+hide circle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam wrapWidth 145
+skinparam nodesep 45
+skinparam ranksep 45
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #F8FBFF
+  BorderColor #315A7D
+  ArrowColor #315A7D
+  FontName Segoe UI
+  FontSize 11
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #A6B5C4
+  FontName Segoe UI
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C8A23A
+}
+
+package "MVC klijent" as P_Client {
+  class RezervacijeController <<Client>> {
+    +Rezervisi(treningId)
+    +Moje()
+    +Otkazi(treningId)
+  }
+}
+
+package "Proxy + Facade" as P_Patterns {
+  interface IRezervacijaProces <<Subject>> {
+    +RezervisiTrening(clanId, treningId)
+  }
+
+  class SigurnosniRezervacijaProxy <<Proxy>> {
+    -proces: IRezervacijaProces
+    -db: ApplicationDbContext
+    +RezervisiTrening(clanId, treningId)
+    -ProvjeriPristup(clanId)
+  }
+
+  class RezervacijaTreningaFacade <<Facade, RealSubject>> {
+    -db: ApplicationDbContext
+    +RezervisiTrening(clanId, treningId)
+    -ProvjeriKapacitet(treningId)
+    -KreirajRezervaciju(clanId, treningId)
+  }
+
+  class RezultatRezervacije {
+    +Uspjesno: bool
+    +Poruka: string
+  }
+}
+
+package "Postojeci podsistem rezervacije" as P_Domain {
+  class Clan {
+    +Id: int
+    +Ime: string
+    +Prezime: string
+    +ImaAktivnuClanarinu()
+  }
+
+  class Clanarina {
+    +Id: int
+    +Status: StatusClanarine
+    +AktivnaNa(datum)
+  }
+
+  class GrupniTrening {
+    +Id: int
+    +Naziv: string
+    +SlobodnaMjesta: int
+    +ImaSlobodnihMjesta()
+    +RezervisiMjesto()
+  }
+
+  class Rezervacija {
+    +ClanId: int
+    +GrupniTreningId: int
+    +DatumKreiranja: DateTime
+    +Status: StatusRezervacije
+  }
+
+  class EmailObavjestenje {
+    +Id: int
+    +Status: StatusObavjestenja
+    +Sadrzaj: string
+  }
+
+  class ApplicationDbContext {
+    +Clanovi
+    +Clanarine
+    +GrupniTreninzi
+    +Rezervacije
+    +EmailObavjestenja
+  }
+}
+
+RezervacijeController ..> IRezervacijaProces : koristi
+SigurnosniRezervacijaProxy ..|> IRezervacijaProces
+RezervacijaTreningaFacade ..|> IRezervacijaProces
+SigurnosniRezervacijaProxy o-- RezervacijaTreningaFacade : delegira
+
+SigurnosniRezervacijaProxy ..> ApplicationDbContext : provjerava clana
+RezervacijaTreningaFacade ..> ApplicationDbContext : koordinira podsistem
+SigurnosniRezervacijaProxy ..> RezultatRezervacije
+RezervacijaTreningaFacade ..> RezultatRezervacije
+
+Clan "1" -- "0..*" Clanarina : kupuje
+Clan "1" -- "0..*" Rezervacija : pravi
+GrupniTrening "1" -- "0..*" Rezervacija : prima
+Clanarina "1" -- "0..*" EmailObavjestenje : pokrece
+
+note bottom of P_Patterns
+  Proxy i Facade imaju isti ulazni interfejs.
+  Controller zato ne zna da li razgovara sa zastupnikom
+  ili stvarnim procesom rezervacije.
+end note
+
+note bottom of P_Domain
+  Prikazan je relevantni dio prvog klasnog dijagrama:
+  clan, clanarina, grupni trening, rezervacija i obavjestenje.
+end note
+
+@enduml

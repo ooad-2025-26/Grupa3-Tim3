@@ -1,0 +1,131 @@
+@startuml FitManager_RezervacijaTreninga_DijagramSekvence
+title FitManager - dijagram sekvence za rezervaciju grupnog treninga
+
+autonumber
+hide footbox
+skinparam shadowing false
+skinparam defaultFontName Segoe UI
+skinparam sequence {
+  ArrowColor #315A7D
+  LifeLineBorderColor #315A7D
+  LifeLineBackgroundColor #F8FBFF
+  ParticipantBorderColor #315A7D
+  ParticipantBackgroundColor #F8FBFF
+  ParticipantFontName Segoe UI
+  ParticipantFontSize 11
+  BoxBorderColor #A6B5C4
+  BoxBackgroundColor #FFFFFF
+  GroupBorderColor #7A8FA5
+  GroupBackgroundColor #F7FAFD
+  DividerBackgroundColor #315A7D
+  DividerFontColor #FFFFFF
+}
+
+actor "clan:Clan" as Clan
+boundary "rezervacijeView\n:RezervacijeView" as View
+control "rezervacijeController\n:RezervacijeController" as Controller
+control "proxy\n:SigurnosniRezervacijaProxy" as Proxy
+control "facade\n:RezervacijaTreningaFacade" as Facade
+database "db\n:ApplicationDbContext" as Db
+entity "clanarina\n:Clanarina" as Clanarina
+entity "trening\n:GrupniTrening" as Trening
+entity "rezervacija\n:Rezervacija" as Rezervacija
+entity "email\n:EmailObavjestenje" as Email
+
+ref over Clan, View, Controller, Db
+  Pregled rasporeda treninga
+  SC03 koraci 1-4
+end ref
+
+== Potvrda rezervacije ==
+Clan -> View : izabere trening i potvrdi
+View -> Controller : POST Rezervisi(treningId)
+activate Controller
+Controller -> Proxy : RezervisiTrening(clanId, treningId)
+activate Proxy
+
+Proxy -> Db : dohvatiClanaSaClanarinama(clanId)
+activate Db
+Db --> Proxy : clan + clanarine
+deactivate Db
+Proxy -> Clanarina : AktivnaNa(danas)
+activate Clanarina
+Clanarina --> Proxy : status clanarine
+deactivate Clanarina
+
+alt clan nema aktivnu clanarinu
+  Proxy --> Controller : neuspjeh("Neaktivna clanarina")
+  deactivate Proxy
+  Controller --> View : poruka + opcija kupovine
+  deactivate Controller
+  View --> Clan : rezervacija nije kreirana
+else pristup dozvoljen
+  Proxy -> Facade : RezervisiTrening(clanId, treningId)
+  activate Facade
+
+  Facade -> Db : dohvatiTrening(treningId)
+  activate Db
+  Db --> Facade : trening
+  deactivate Db
+  Facade -> Trening : ImaSlobodnihMjesta()
+  activate Trening
+  Trening --> Facade : ima mjesta?
+  deactivate Trening
+
+  alt nema slobodnih mjesta
+    Facade --> Proxy : neuspjeh("Trening je popunjen")
+    deactivate Facade
+    Proxy --> Controller : rezultat
+    deactivate Proxy
+    Controller --> View : poruka + alternativni termini
+    deactivate Controller
+    View --> Clan : odabir drugog termina ili odustajanje
+  else mjesto je dostupno
+    Facade -> Db : postojiAktivnaRezervacija(clanId, treningId)
+    activate Db
+    Db --> Facade : postoji?
+    deactivate Db
+
+    alt rezervacija vec postoji
+      Facade --> Proxy : neuspjeh("Rezervacija vec postoji")
+      deactivate Facade
+      Proxy --> Controller : rezultat
+      deactivate Proxy
+      Controller --> View : poruka o postojecoj rezervaciji
+      deactivate Controller
+      View --> Clan : rezervacija nije duplirana
+    else rezervacija se moze kreirati
+      create Rezervacija
+      Facade -> Rezervacija ++ : <<create>> nova(clanId, treningId)
+      Rezervacija --> Facade : rezervacija
+      Facade -> Trening : RezervisiMjesto()
+      activate Trening
+      Trening --> Facade : slobodnaMjesta umanjena
+      deactivate Trening
+      Facade -> Db : sacuvaj(rezervacija, trening)
+      activate Db
+      Db --> Facade : sacuvano
+      deactivate Db
+
+      opt potvrda rezervacije
+        create Email
+        Facade -> Email ++ : <<create>> pripremiPotvrdu()
+        Email --> Facade : obavjestenje
+        Facade -> Db : dodajObavjestenje(email)
+        activate Db
+        Db --> Facade : evidentirano
+        deactivate Db
+      end
+
+      Facade --> Proxy : uspjeh("Rezervacija kreirana")
+      deactivate Facade
+      Proxy --> Controller : rezultat
+      deactivate Proxy
+      Controller --> View : potvrda rezervacije
+      deactivate Controller
+      View --> Clan : prikaz potvrde
+    end
+  end
+end
+
+@enduml
