@@ -9,7 +9,7 @@ namespace FitManager.Models
         public Intenzitet Intenzitet { get; set; }
         public string SedmicniPlan { get; set; } = string.Empty;
         public DateTime DatumKreiranja { get; set; } = DateTime.UtcNow;
-        public int ClanId { get; set; }
+        public string ClanId { get; set; } = string.Empty;
         public Korisnik Clan { get; set; } = null!;
 
         public void AzurirajIntenzitet(Intenzitet intenzitet)

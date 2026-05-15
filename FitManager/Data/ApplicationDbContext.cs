@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitManager.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<Korisnik>(options)
     {
         public DbSet<Korisnik> Korisnici => Set<Korisnik>();
         public DbSet<QRKod> QRKodovi => Set<QRKod>();
@@ -28,7 +29,7 @@ namespace FitManager.Data
                 entity.Property(korisnik => korisnik.Email)
                     .HasMaxLength(256)
                     .IsRequired();
-                entity.Property(korisnik => korisnik.KorisnickoIme)
+                entity.Property(korisnik => korisnik.UserName)
                     .HasMaxLength(100)
                     .IsRequired();
                 entity.Property(korisnik => korisnik.Uloga)
@@ -39,7 +40,7 @@ namespace FitManager.Data
                 entity.Property(korisnik => korisnik.Prezime)
                     .HasMaxLength(100)
                     .IsRequired();
-                entity.Property(korisnik => korisnik.Telefon)
+                entity.Property(korisnik => korisnik.PhoneNumber)
                     .HasMaxLength(30);
             });
 

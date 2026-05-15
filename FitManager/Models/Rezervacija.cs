@@ -3,7 +3,7 @@ namespace FitManager.Models
     public class Rezervacija
     {
         public int Id { get; set; }
-        public int ClanId { get; set; }
+        public string ClanId { get; set; } = string.Empty;
         public Korisnik Clan { get; set; } = null!;
         public int GrupniTreningId { get; set; }
         public GrupniTrening GrupniTrening { get; set; } = null!;

@@ -6,7 +6,7 @@ namespace FitManager.Models
         public string Kod { get; set; } = string.Empty;
         public DateTime DatumGenerisanja { get; set; } = DateTime.UtcNow;
         public bool Aktivan { get; set; } = true;
-        public int ClanId { get; set; }
+        public string ClanId { get; set; }= string.Empty;
         public Korisnik Clan { get; set; } = null!;
 
         public void Deaktiviraj()

@@ -1,18 +1,32 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace FitManager.Models
 {
-    public class Korisnik
+    public class Korisnik : IdentityUser
     {
-        public int Id { get; set; }
         public UlogaKorisnika Uloga { get; set; }
-        public string Email { get; set; } = string.Empty;
-        public string KorisnickoIme { get; set; } = string.Empty;
+
         public string Ime { get; set; } = string.Empty;
+
         public string Prezime { get; set; } = string.Empty;
-        public string Telefon { get; set; } = string.Empty;
+
         public DateTime DatumRodjenja { get; set; }
+
         public DateTime DatumRegistracije { get; set; } = DateTime.UtcNow;
 
         public QRKod? QRKod { get; set; }
+
+        public string KorisnickoIme
+        {
+            get => UserName!;
+            set => UserName = value;
+        }
+
+        public string Telefon
+        {
+            get => PhoneNumber!;
+            set => PhoneNumber = value;
+        }
 
         public void AzurirajEmail(string email)
         {

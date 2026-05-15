@@ -8,7 +8,7 @@ namespace FitManager.Models
         public decimal Cijena { get; set; }
         public StatusClanarine Status { get; set; } = StatusClanarine.AKTIVNA;
         public bool ObavjestenjePoslano { get; set; }
-        public int ClanId { get; set; }
+        public string ClanId { get; set; }=string.Empty;
         public Korisnik Clan { get; set; } = null!;
         public int TipClanarineId { get; set; }
         public TipClanarine TipClanarine { get; set; } = null!;

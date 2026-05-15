@@ -4,7 +4,7 @@ namespace FitManager.Models
     {
         public int Id { get; set; }
         public DateTime VrijemeDolaska { get; set; } = DateTime.UtcNow;
-        public int ClanId { get; set; }
+        public string ClanId { get; set; } = string.Empty;
         public Korisnik Clan { get; set; } = null!;
 
         public bool RegistrovanNaDan(DateTime datum)

@@ -26,7 +26,7 @@ namespace FitManager.Controllers
         }
 
         // GET: Korisnik/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null)
             {
@@ -66,7 +66,7 @@ namespace FitManager.Controllers
         }
 
         // GET: Korisnik/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
@@ -86,7 +86,7 @@ namespace FitManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Uloga,Email,KorisnickoIme,Ime,Prezime,Telefon,DatumRodjenja,DatumRegistracije")] Korisnik korisnik)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Uloga,Email,KorisnickoIme,Ime,Prezime,Telefon,DatumRodjenja,DatumRegistracije")] Korisnik korisnik)
         {
             if (id != korisnik.Id)
             {
@@ -117,7 +117,7 @@ namespace FitManager.Controllers
         }
 
         // GET: Korisnik/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {
@@ -149,7 +149,7 @@ namespace FitManager.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool KorisnikExists(int id)
+        private bool KorisnikExists(string id)
         {
             return _context.Korisnici.Any(e => e.Id == id);
         }
