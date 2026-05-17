@@ -10,7 +10,7 @@ namespace FitManager.Models
         public DateTime DatumVrijeme { get; set; }
         public int Trajanje { get; set; }
         public TipTreninga TipTreninga { get; set; }
-        public int TrenerId { get; set; }
+        public string TrenerId { get; set; }
         public Korisnik Trener { get; set; } = null!;
 
         public bool ImaSlobodnihMjesta()

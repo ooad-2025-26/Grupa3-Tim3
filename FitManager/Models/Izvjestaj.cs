@@ -8,7 +8,7 @@ namespace FitManager.Models
         public DateTime DatumDo { get; set; }
         public DateTime DatumGenerisan { get; set; } = DateTime.UtcNow;
         public string Sadrzaj { get; set; } = string.Empty;
-        public int AdministratorId { get; set; }
+        public string AdministratorId { get; set; }
         public Korisnik Administrator { get; set; } = null!;
 
         public bool PokrivaPeriod(DateTime datum)
