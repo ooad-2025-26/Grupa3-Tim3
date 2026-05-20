@@ -10,6 +10,8 @@ namespace FitManager.Models
         public DateTime DatumKreiranja { get; set; } = DateTime.UtcNow;
         public StatusRezervacije Status { get; set; } = StatusRezervacije.AKTIVNA;
 
+        public int TestAtribut { get; set; } // Primjer dodatnog atributa
+
         public bool Aktivna()
         {
             return Status == StatusRezervacije.AKTIVNA;
