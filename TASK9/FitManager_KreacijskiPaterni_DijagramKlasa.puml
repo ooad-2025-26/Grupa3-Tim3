@@ -1,0 +1,219 @@
+@startuml FitManager_KreacijskiPaterni_DijagramKlasa
+title FitManager - klasni dijagram sa kreacijskim paternima
+
+top to bottom direction
+hide circle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam wrapWidth 155
+skinparam nodesep 55
+skinparam ranksep 70
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #F8FBFF
+  BorderColor #315A7D
+  ArrowColor #315A7D
+  FontName Segoe UI
+  FontSize 11
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #A6B5C4
+  FontName Segoe UI
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C8A23A
+}
+
+package "Factory Method - kreiranje korisnika" as P_Factory {
+  class KorisnikFactory <<Factory Method>> {
+    +KreirajKorisnika(uloga: UlogaKorisnika, podaci: KorisnickiPodaci): Korisnik
+    -KreirajClana(podaci: KorisnickiPodaci): Clan
+    -KreirajTrenera(podaci: KorisnickiPodaci): Trener
+    -KreirajAdministratora(podaci: KorisnickiPodaci): Administrator
+  }
+
+  class KorisnickiPodaci <<DTO>> {
+    +Email: string
+    +KorisnickoIme: string
+    +Ime: string
+    +Prezime: string
+    +Telefon: string
+    +DatumRodjenja: DateTime
+  }
+}
+
+package "Postojeci domenski model" as P_Domain {
+  abstract class Korisnik {
+    -id: string
+    -email: string
+    -korisnickoIme: string
+    -uloga: UlogaKorisnika
+    +AzurirajEmail(email: string): void
+  }
+
+  class Clan {
+    -ime: string
+    -prezime: string
+    -telefon: string
+    -datumRodjenja: DateTime
+    -datumRegistracije: DateTime
+    +ImaAktivnuClanarinu(): bool
+    +AzurirajProfil(podaci: ProfilClana): void
+  }
+
+  class Trener {
+    -ime: string
+    -prezime: string
+    +ImaPreklapanje(termin: Termin): bool
+  }
+
+  class Administrator {
+    +KonfigurisiCijenu(tipId: int, cijena: decimal): void
+  }
+
+  class QRKod {
+    -id: int
+    -kod: string
+    -datumGenerisanja: DateTime
+    -aktivan: bool
+    +Deaktiviraj(): void
+  }
+
+  class TipClanarine {
+    -id: int
+    -naziv: TipClanarineNaziv
+    -trajanjeDana: int
+    -cijena: decimal
+    +PromijeniCijenu(cijena: decimal): void
+  }
+
+  class Clanarina {
+    -id: int
+    -datumPocetka: DateTime
+    -datumIsteka: DateTime
+    -cijena: decimal
+    -status: StatusClanarine
+    +AktivnaNa(datum: DateTime): bool
+    +Otkazi(): void
+  }
+
+  class GrupniTrening {
+    -id: int
+    -naziv: string
+    -maksKapacitet: int
+    -slobodnaMjesta: int
+    -datumVrijeme: DateTime
+    -tipTreninga: TipTreninga
+    +ImaSlobodnihMjesta(): bool
+    +RezervisiMjesto(): void
+  }
+
+  class Rezervacija {
+    -id: int
+    -datumKreiranja: DateTime
+    -status: StatusRezervacije
+    +Aktivna(): bool
+    +Otkazi(vrijeme: DateTime): void
+  }
+
+  class Dolazak {
+    -id: int
+    -vrijemeDolaska: DateTime
+    +RegistrovanNaDan(datum: DateTime): bool
+  }
+
+  class Izvjestaj {
+    -id: int
+    -tipIzvjestaja: TipIzvjestaja
+    -datumOd: DateTime
+    -datumDo: DateTime
+    -sadrzaj: string
+    +PokrivaPeriod(datum: DateTime): bool
+  }
+
+  class EmailObavjestenje {
+    -id: int
+    -datumSlanja: DateTime
+    -status: StatusObavjestenja
+    -sadrzaj: string
+    +OznaciPoslano(): void
+    +OznaciGresku(): void
+  }
+}
+
+package "Builder - preporuka plana treninga" as P_Builder {
+  interface IPlanTreningaBuilder <<Builder>> {
+    +PostaviClana(clan: Clan): IPlanTreningaBuilder
+    +PostaviCilj(cilj: FitnessCilj): IPlanTreningaBuilder
+    +PostaviBmi(bmi: decimal): IPlanTreningaBuilder
+    +OdrediKategoriju(): IPlanTreningaBuilder
+    +PostaviIntenzitet(intenzitet: Intenzitet): IPlanTreningaBuilder
+    +GenerisiSedmicniPlan(): IPlanTreningaBuilder
+    +Build(): PlanTreninga
+  }
+
+  class PlanTreningaBuilder <<Concrete Builder>> {
+    -plan: PlanTreninga
+    +PostaviClana(clan: Clan): IPlanTreningaBuilder
+    +PostaviCilj(cilj: FitnessCilj): IPlanTreningaBuilder
+    +PostaviBmi(bmi: decimal): IPlanTreningaBuilder
+    +OdrediKategoriju(): IPlanTreningaBuilder
+    +PostaviIntenzitet(intenzitet: Intenzitet): IPlanTreningaBuilder
+    +GenerisiSedmicniPlan(): IPlanTreningaBuilder
+    +Build(): PlanTreninga
+  }
+
+  class PreporukaPlanaService <<Director>> {
+    -builder: IPlanTreningaBuilder
+    +KreirajPreporuceniPlan(clan: Clan, cilj: FitnessCilj, bmi: decimal): PlanTreninga
+  }
+
+  class PlanTreninga {
+    -id: int
+    -fitnessCilj: FitnessCilj
+    -bmi: decimal
+    -bmiKategorija: BmiKategorija
+    -intenzitet: Intenzitet
+    -sedmicniPlan: string
+    -datumKreiranja: DateTime
+    +AzurirajIntenzitet(intenzitet: Intenzitet): void
+  }
+}
+
+Korisnik <|-- Clan
+Korisnik <|-- Trener
+Korisnik <|-- Administrator
+
+KorisnikFactory ..> KorisnickiPodaci : koristi
+KorisnikFactory ..> Korisnik : vraca
+KorisnikFactory ..> Clan : kreira
+KorisnikFactory ..> Trener : kreira
+KorisnikFactory ..> Administrator : kreira
+
+PreporukaPlanaService --> IPlanTreningaBuilder : vodi korake
+PlanTreningaBuilder ..|> IPlanTreningaBuilder
+PlanTreningaBuilder ..> PlanTreninga : sklapa
+PreporukaPlanaService ..> PlanTreninga : vraca
+
+Clan "1" *-- "0..1" QRKod : posjeduje
+Clan "1" -- "0..*" Clanarina : kupuje
+TipClanarine "1" -- "0..*" Clanarina : definise
+Clan "1" -- "0..*" Rezervacija : pravi
+GrupniTrening "1" -- "0..*" Rezervacija : prima
+Trener "1" -- "0..*" GrupniTrening : vodi
+Clan "1" -- "0..*" Dolazak : ima
+Clan "1" -- "0..*" PlanTreninga : dobija
+Clanarina "1" -- "0..*" EmailObavjestenje : pokrece
+Administrator "1" -- "0..*" Izvjestaj : generise
+
+legend bottom left
+  Factory Method centralizuje kreiranje korisnika po ulozi.
+  Builder postepeno formira PlanTreninga i odvaja pravila preporuke od kontrolera.
+  Dijagram je dizajnerski prijedlog; klase paterna nije potrebno implementirati u ovom tasku.
+endlegend
+
+@enduml

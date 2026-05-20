@@ -1,0 +1,152 @@
+@startuml FitManager_ERD
+title FitManager - ERD domenskog modela
+
+top to bottom direction
+hide circle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam wrapWidth 150
+skinparam nodesep 60
+skinparam ranksep 75
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #F8FBFF
+  BorderColor #315A7D
+  ArrowColor #315A7D
+  FontName Segoe UI
+  FontSize 11
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C8A23A
+}
+
+entity "Korisnik" as Korisnik <<table>> {
+  * Id : nvarchar(450) <<PK>>
+  --
+  Uloga : int
+  Ime : nvarchar(100)
+  Prezime : nvarchar(100)
+  DatumRodjenja : datetime2
+  DatumRegistracije : datetime2
+  KorisnickoIme : nvarchar(max)
+  Telefon : nvarchar(max)
+  UserName : nvarchar(100)
+  Email : nvarchar(256)
+}
+
+entity "QRKod" as QRKod <<table>> {
+  * Id : int <<PK>>
+  --
+  Kod : nvarchar(128) <<UQ>>
+  DatumGenerisanja : datetime2
+  Aktivan : bit
+  ClanId : nvarchar(450) <<FK>>
+}
+
+entity "TipClanarine" as TipClanarine <<table>> {
+  * Id : int <<PK>>
+  --
+  Naziv : int <<UQ>>
+  TrajanjeDana : int
+  Cijena : decimal(18,2)
+}
+
+entity "Clanarina" as Clanarina <<table>> {
+  * Id : int <<PK>>
+  --
+  DatumPocetka : datetime2
+  DatumIsteka : datetime2
+  Cijena : decimal(18,2)
+  Status : int
+  ObavjestenjePoslano : bit
+  ClanId : nvarchar(450) <<FK>>
+  TipClanarineId : int <<FK>>
+}
+
+entity "GrupniTrening" as GrupniTrening <<table>> {
+  * Id : int <<PK>>
+  --
+  Naziv : nvarchar(150)
+  Opis : nvarchar(1000)
+  MaksKapacitet : int
+  SlobodnaMjesta : int
+  DatumVrijeme : datetime2
+  Trajanje : int
+  TipTreninga : int
+  TrenerId : nvarchar(450) <<FK>>
+}
+
+entity "Rezervacija" as Rezervacija <<table>> {
+  * Id : int <<PK>>
+  --
+  ClanId : nvarchar(450) <<FK>>
+  GrupniTreningId : int <<FK>>
+  DatumKreiranja : datetime2
+  Status : int
+  TestAtribut : int
+  --
+  UQ(ClanId, GrupniTreningId)
+}
+
+entity "Dolazak" as Dolazak <<table>> {
+  * Id : int <<PK>>
+  --
+  VrijemeDolaska : datetime2
+  ClanId : nvarchar(450) <<FK>>
+}
+
+entity "PlanTreninga" as PlanTreninga <<table>> {
+  * Id : int <<PK>>
+  --
+  FitnessCilj : int
+  Bmi : decimal(18,2)
+  BmiKategorija : int
+  Intenzitet : int
+  SedmicniPlan : nvarchar(4000)
+  DatumKreiranja : datetime2
+  ClanId : nvarchar(450) <<FK>>
+}
+
+entity "Izvjestaj" as Izvjestaj <<table>> {
+  * Id : int <<PK>>
+  --
+  TipIzvjestaja : int
+  DatumOd : datetime2
+  DatumDo : datetime2
+  DatumGenerisan : datetime2
+  Sadrzaj : nvarchar(4000)
+  AdministratorId : nvarchar(450) <<FK>>
+}
+
+entity "EmailObavjestenje" as EmailObavjestenje <<table>> {
+  * Id : int <<PK>>
+  --
+  DatumSlanja : datetime2
+  Status : int
+  Sadrzaj : nvarchar(4000)
+  PokusajSlanja : int
+  ClanarinaId : int <<FK>>
+}
+
+Korisnik "1" -- "0..1" QRKod : ClanId
+Korisnik "1" -- "0..*" Clanarina : ClanId
+TipClanarine "1" -- "0..*" Clanarina : TipClanarineId
+Korisnik "1" -- "0..*" Rezervacija : ClanId
+GrupniTrening "1" -- "0..*" Rezervacija : GrupniTreningId
+Korisnik "1" -- "0..*" GrupniTrening : TrenerId
+Korisnik "1" -- "0..*" Dolazak : ClanId
+Korisnik "1" -- "0..*" PlanTreninga : ClanId
+Korisnik "1" -- "0..*" Izvjestaj : AdministratorId
+Clanarina "1" -- "0..*" EmailObavjestenje : ClanarinaId
+
+legend bottom left
+  Korisnik nasljeduje ASP.NET Identity korisnika.
+  Identity tabele postoje u bazi, ali nisu prikazane u glavnom ERD-u radi preglednosti.
+  ProfilClana i Termin su [NotMapped] pomocne klase, pa se ne prevode u zasebne tabele.
+  Enum atributi se mapiraju kao int vrijednosti, a relacije koriste DeleteBehavior.Restrict.
+endlegend
+
+@enduml
