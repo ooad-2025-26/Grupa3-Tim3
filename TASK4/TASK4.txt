@@ -1,0 +1,14 @@
+
+Task 4
+Completion requirements
+
+Četvrti projektni zadatak
+
+Prototipi korisničkih interfejsa
+
+Potrebno je dizajnirati prototipe svih korisničkih interfejsa aplikacije koja će biti kreirana za sistem koristeći alat po želji. Preporučuje se korištenje online alata poput Proto ili Visual Paradigm Online.
+Analiza i dizajn sistema
+
+Potrebno je izvršiti analizu i dizajn sistema (template je definisan u file-u AnalizaDizajnSistema.docx) koristeći specifikaciju sistema i prethodno kreirane dijagrame.
+
+Rok za izradu zadatka: 24h prije 5. laboratorijske vježbe (sedmica 12.4. - 17.4.)

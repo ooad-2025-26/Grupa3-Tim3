@@ -1,0 +1,11 @@
+
+Task 8
+Completion requirements
+
+Osmi projektni zadatak
+
+Implementacija korisničkog modela
+
+Implementirati metode za upravljanje korisnicima koristeći AspNetUsers sistem tabela. Naslijediti klase za rad sa korisnikom iz klase IdentityUser.
+
+Rok za izradu zadatka 24h prije 9. laboratorijske vježbe (sedmica 18.5. - 22.5.)
