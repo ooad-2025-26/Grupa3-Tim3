@@ -131,16 +131,16 @@ entity "EmailObavjestenje" as EmailObavjestenje <<table>> {
   ClanarinaId : int <<FK>>
 }
 
-Korisnik "1" -- "0..1" QRKod : ClanId
-Korisnik "1" -- "0..*" Clanarina : ClanId
-TipClanarine "1" -- "0..*" Clanarina : TipClanarineId
-Korisnik "1" -- "0..*" Rezervacija : ClanId
-GrupniTrening "1" -- "0..*" Rezervacija : GrupniTreningId
-Korisnik "1" -- "0..*" GrupniTrening : TrenerId
-Korisnik "1" -- "0..*" Dolazak : ClanId
-Korisnik "1" -- "0..*" PlanTreninga : ClanId
-Korisnik "1" -- "0..*" Izvjestaj : AdministratorId
-Clanarina "1" -- "0..*" EmailObavjestenje : ClanarinaId
+Korisnik ||--o| QRKod : ClanId
+Korisnik ||--o{ Clanarina : ClanId
+TipClanarine ||--o{ Clanarina : TipClanarineId
+Korisnik ||--o{ Rezervacija : ClanId
+GrupniTrening ||--o{ Rezervacija : GrupniTreningId
+Korisnik ||--o{ GrupniTrening : TrenerId
+Korisnik ||--o{ Dolazak : ClanId
+Korisnik ||--o{ PlanTreninga : ClanId
+Korisnik ||--o{ Izvjestaj : AdministratorId
+Clanarina ||--o{ EmailObavjestenje : ClanarinaId
 
 legend bottom left
   Korisnik nasljeduje ASP.NET Identity korisnika.
