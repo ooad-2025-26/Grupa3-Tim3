@@ -1,0 +1,10 @@
+
+Task 3
+Completion requirements
+Treći projektni zadatak
+
+Dijagrami aktivnosti
+
+Potrebno je dizajnirati i detaljno razraditi dijagrame aktivnosti za sve slučajeve upotrebe u sistemu za koje su u okviru prethodnog projektnog zadatka kreirani scenariji.
+
+Rok za izradu zadatka: 24h prije 4. laboratorijske vježbe (sedmica 6.4. - 11.4.)
