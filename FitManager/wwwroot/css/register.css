@@ -1,0 +1,99 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+/* GORNJA BOJA */
+.top-bar {
+    width: 100%;
+    height: 40px;
+    background-color: #C5C408;
+}
+
+
+/* DONJA BOJA */
+.bottom-bar {
+    width: 100%;
+    height: 40px;
+    background-color: #C5C408;
+}
+
+/* MAIN CONTENT */
+.main-content {
+    min-height: calc(100vh - 80px);
+    background-color: white;
+}
+
+/* LOGO CONTAINER */
+.logo-container {
+    
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* LOGO */
+.logo {
+    width: 250px;
+    margin-top: 40px;
+}
+
+
+/* TEXT CONTAINER */
+
+.text-container {
+    margin-left: 80px;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* TITLE */
+.register-title {
+    font-size: 38px;
+    font-weight: bold;
+    color: black;
+}
+
+
+/* MANJI TEKST */
+.input-label {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: normal;
+    color: black;
+}
+
+/* INPUT */
+.custom-input {
+    width: 350px;
+    height: 45px;
+    padding-left: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+/* REGISTER BUTTON */
+.register-button {
+    width: 370px;
+    height: 50px;
+    margin-top: 35px;
+    border: none;
+    border-radius: 10px;
+    background-color: #C5C408;
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    /* HOVER EFEKAT */
+    .register-button:hover {
+        background-color: #a8a006;
+        transform: scale(1.03);
+    }
+
