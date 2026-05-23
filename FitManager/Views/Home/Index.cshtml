@@ -1,8 +1,239 @@
 ﻿@{
+    Layout = null;
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <title>Home Page</title>
+
+    <link rel="stylesheet" href="/css/home.css" />
+
+</head>
+
+<body>
+
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+
+            <!-- LEFT SIDE -->
+            <div class="nav-left">
+
+                <a href="/" class="logo-container">
+
+                    <img src="/images/dumbbell.png"
+                         alt="Dumbbell"
+                         class="nav-icon" />
+
+                    <span class="logo-text">
+                        FitManager
+                    </span>
+
+                </a>
+
+            </div>
+
+            <!-- CENTER -->
+            <div class="nav-center">
+
+                <a href="/" class="nav-link">Početna</a>
+
+                <a href="#" class="nav-link">O nama</a>
+
+                <a href="#" class="nav-link">Cijena</a>
+
+                <a href="#" class="nav-link">Kontakt</a>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="nav-right">
+                <a href="/Identity/Account/Login"
+                   class="login-button">
+
+                    Prijavi se
+
+                </a>
+
+                <!-- HAMBURGER -->
+                <div class="hamburger-menu">
+
+                    ☰
+
+                </div>
+
+                <!-- DROPDOWN MENU -->
+                <div class="dropdown-menu">
+
+                    <a href="#" class="dropdown-item">
+                            Moj profil
+                    </a>
+
+                    <a href="#" class="dropdown-item">
+                        Moja članarina
+                    </a>
+
+                    <a href="#" class="dropdown-item">
+                        Rezervacije
+                    </a>
+
+                    <a href="#" class="dropdown-item">
+                        Plan treninga
+                    </a>
+
+                    <a href="#" class="dropdown-item">
+                        Admin
+                    </a>
+
+                    <a href="#" class="dropdown-item">
+                        Odjavi se
+                    </a>
+
+                </div>
+            </div>
+
+        </nav>
+        <!-- HERO TEXT -->
+        <div class="hero-content">
+
+            <h1 class="hero-title">
+
+                Započni svoj
+                <span>fitness</span>
+                put
+
+                <br>
+
+                treniraj i
+                <span>zabavi se</span>
+
+            </h1>
+
+            <p class="hero-description">
+
+                Prati svoj napredak, ostani motivisan i poveži se sa zajednicom
+                koja te gura naprijed.
+
+                <br>
+
+                FitManager je mjesto gdje se fitness pretvara u zabavu
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <!-- JOIN BUTTON -->
+                <a href="/Identity/Account/Register"
+                   class="join-button">
+
+                    Učlani se
+
+                </a>
+
+                <!-- MORE BUTTON -->
+                <a href="#"
+                   class="more-button">
+
+                    Saznaj više
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SECOND SECTION -->
+    <section class="second-section">
+        <div class="stats-container">
+
+            <!-- ITEM 1 -->
+            <div class="stat-item stat-left">
+
+                <h1 class="stat-number">
+                    500+
+                </h1>
+
+                <p class="stat-text">
+                    Članova
+                </p>
+
+            </div>
+
+            <!-- ITEM 2 -->
+            <div class="stat-item">
+
+                <h1 class="stat-number">
+                    20+
+                </h1>
+
+                <p class="stat-text">
+                    Trenera
+                </p>
+
+            </div>
+
+            <!-- ITEM 3 -->
+            <div class="stat-item stat-right">
+
+                <h1 class="stat-number">
+                    40+
+                </h1>
+
+                <p class="stat-text">
+                    Grupa
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+    </section>
+
+    <!-- THIRD SECTION -->
+    <section class="third-section">
+
+        <div class="info-frame">
+        </div>
+
+    </section>
+
+    <script>
+
+            const hamburger =
+                document.querySelector('.hamburger-menu');
+
+            const dropdown =
+                document.querySelector('.dropdown-menu');
+
+            hamburger.addEventListener('click', () => {
+
+                if (dropdown.style.display === 'flex') {
+
+                    dropdown.style.display = 'none';
+
+                }
+
+                else {
+
+                    dropdown.style.display = 'flex';
+
+                }
+
+            });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,357 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.hero-section {
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/images/gym.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* NAVBAR */
+.navbar {
+    width: 95%;
+    height: 90px;
+    margin: 0 auto;
+    background-color: #272F38;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+/* LEFT */
+.nav-left {
+    display: flex;
+    align-items: center;
+
+    
+}
+/* CENTER */
+.nav-center {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-left:200px;
+
+}
+/* RIGHT */
+.nav-right {
+    display: flex;
+    align-items: center;
+
+    gap:50px;
+    margin-left:300px;
+}
+/* NAVBAR ICON */
+.nav-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display:block;
+}
+
+/* LOGO CONTAINER */
+.logo-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    text-decoration: none;
+}
+
+.logo-text {
+    color: #C5C408;
+    font-size: 24px;
+    font-weight: bold;
+    line-height:1;
+}
+/*NAV LINKOVI*/
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+/*JEDAN LINK*/
+.nav-link {
+    text-decoration: none;
+    color: #C5C408;
+    font-size: 20px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+    /* HOVER */
+    .nav-link:hover {
+        color: white;
+    }
+
+
+/* LOGIN BUTTON */
+.login-button {
+    width: 150px;
+    height: 45px;
+    background-color: #C5C408;
+    color: black;
+    text-decoration: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+    /* HOVER */
+    .login-button:hover {
+        background-color: #a8a006;
+        transform: scale(1.05);
+    }
+
+/* HAMBURGER MENU */
+.hamburger-menu {
+    width: 50px;
+    height: 50px;
+    background-color: #C5C408;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    /* HOVER */
+    .hamburger-menu:hover {
+        background-color: #a8a006;
+        transform: scale(1.05);
+    }
+
+/* DROPDOWN MENU */
+.dropdown-menu {
+    position: absolute;
+    top: 100px;
+    right: 40px;
+    width: 220px;
+    background-color: #272F38;
+    border-radius: 15px;
+    padding: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* SINGLE ITEM */
+.dropdown-item {
+    text-decoration: none;
+    color: #C5C408;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    /* HOVER */
+    .dropdown-item:hover {
+        color: white;
+    }
+
+/* HERO CONTENT */
+.hero-content {
+    width: 100%;
+    height: calc(100vh - 90px);
+    display: flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-bottom:180px;
+}
+
+/* HERO TITLE */
+.hero-title {
+    color: white;
+    font-size: 70px;
+    font-weight: 700;
+    line-height: 1.2;
+    font-family: 'Poppins', sans-serif;
+}
+
+    /* YELLOW TEXT */
+    .hero-title span {
+        color: #C5C408;
+    }
+
+/* HERO DESCRIPTION */
+.hero-description {
+    margin-top: 0px;
+    color: white;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.8;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* BUTTON CONTAINER */
+.hero-buttons {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+/* JOIN BUTTON */
+.join-button {
+    width: 220px;
+    height: 65px;
+    background-color: #C5C408;
+    color: black;
+    text-decoration: none;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+    /* JOIN HOVER */
+    .join-button:hover {
+        background-color: #dede12;
+        transform: scale(1.07);
+    }
+
+/* MORE BUTTON */
+.more-button {
+    width: 220px;
+    height: 65px;
+    background-color: transparent;
+    color: #C5C408;
+    text-decoration: none;
+    border: 2px solid #C5C408;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+    /* MORE HOVER */
+    .more-button:hover {
+        background-color: #C5C408;
+        color: black;
+        transform: scale(1.07);
+    }
+
+/* SECOND SECTION */
+.second-section {
+    width: 100%;
+    height: 150px;
+    background-color: #272F38;
+}
+
+/* STATS CONTAINER */
+.stats-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 140px;
+}
+
+/* SINGLE ITEM */
+.stat-item {
+    text-align: center;
+}
+
+/* NUMBER */
+.stat-number {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 64px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* TEXT */
+.stat-text {
+    color: #C5C408;
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: -10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* LEFT ITEM */
+.stat-left {
+    margin-right: 200px;
+}
+
+/* RIGHT ITEM */
+.stat-right {
+    margin-left: 200px;
+}
+
+/* SECOND SECTION */
+.second-section {
+    width: 100%;
+    height: 300px;
+    background-color: #272F38;
+}
+
+
+/* STATS CONTAINER */
+.stats-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 140px;
+}
+
+/* THIRD SECTION */
+.third-section {
+    width: 100%;
+    min-height: 800px;
+    background-color: #272F38;
+    display: flex;
+    justify-content: center;
+    padding-top: 80px;
+}
+
+/* INFO FRAME */
+.info-frame {
+    width: 85%;
+    height: 400px;
+    background-color: #272F38;
+    border-radius: 30px;
+}
