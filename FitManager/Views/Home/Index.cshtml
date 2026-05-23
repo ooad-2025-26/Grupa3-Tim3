@@ -205,9 +205,145 @@
     <section class="third-section">
 
         <div class="info-frame">
+
+            <!-- LEFT FRAME -->
+            <div class="left-frame">
+                <!-- TITLE -->
+                <h1 class="team-title">
+
+                    PRIDRUŽI SE
+                    <br>
+                    NAŠEM TIMU
+
+                </h1>
+
+                <!-- DESCRIPTION -->
+                <p class="team-description">
+
+                    Upoznaj naš tim stručnjaka koji će ti
+                    kreirati plan treninga prilagođen
+                    tvojim ciljevima.
+
+                </p>
+
+                <!-- BUTTON -->
+                <a href="#"
+                   class="plan-button">
+
+                    Izaberi svoj plan
+
+                </a>
+
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="trainer-section">
+                <!-- CARDS -->
+                <div class="trainer-wrapper">
+                <div class="trainer-slider">
+
+                    <!-- CARD1 -->
+                    <div class="trainer-card">
+
+                        <img src="/images/trainer1.jpg"
+                             alt="Trainer"
+                             class="trainer-image"/>
+
+                        <h2 class="trainer-name">
+                            Miralem Pjanić
+                        </h2>
+                        
+                        <div class="trainer-line"></div>
+
+                        <p class="trainer-role">
+                            Glavni trener
+                        </p>
+                    </div>
+
+                    <!-- CARD 2 -->
+                    <div class="trainer-card">
+
+    <img src="/images/trainer2.jpg"
+         alt="Trainer"
+         class="trainer-image" />
+
+    <h2 class="trainer-name">
+        Edin Hamidovic
+    </h2>
+
+    <div class="trainer-line"></div>
+
+    <p class="trainer-role">
+        Kondicioni trener
+    </p>
+
+</div>
+<!-- CARD 3 -->
+<div class="trainer-card">
+
+    <img src="/images/trainer1.jpg"
+         alt="Trainer"
+         class="trainer-image" />
+
+    <h2 class="trainer-name">
+        Ahmed Delic
+    </h2>
+
+    <div class="trainer-line"></div>
+
+    <p class="trainer-role">
+        Trener
+    </p>
+
+</div>
+<!-- CARD 4 -->
+<div class="trainer-card">
+
+    <img src="/images/trainer2.jpg"
+         alt="Trainer"
+         class="trainer-image" />
+
+    <h2 class="trainer-name">
+        Halid Masovic
+    </h2>
+
+    <div class="trainer-line"></div>
+
+    <p class="trainer-role">
+        Trener
+    </p>
+
+</div>
+                    
+                </div>
+                </div>
+                <!-- ARROWS -->
+                <div class="slider-buttons">
+                    <div class="slider-arrow">
+                        ←
+                    </div>
+                    <div class="slider-arrow">
+                        →
+                    </div>
+                </div>
+            </div>
+
+            
         </div>
 
+      
     </section>
+
+    <!-- FOURTH SECTION -->
+
+    <section class="fourth-section">
+
+
+    </section>
+
+
+
 
     <script>
 
@@ -233,6 +369,60 @@
 
             });
 
+
+                   
+
+                    
+
+            const slider =
+                document.querySelector('.trainer-slider');
+
+            const arrows =
+                document.querySelectorAll('.slider-arrow');
+
+            const totalSlides =
+                document.querySelectorAll('.trainer-card').length;
+
+            let currentSlide = 0;
+
+            const cardWidth = 315;
+
+            // RIGHT ARROW
+            arrows[1].addEventListener('click', () => {
+
+                currentSlide++;
+
+                // LOOP
+                if (currentSlide > totalSlides - 2) {
+
+                    currentSlide = 0;
+
+                }
+
+                slider.style.transform =
+                    `translateX(-${currentSlide * cardWidth}px)`;
+
+            });
+
+            // LEFT ARROW
+            arrows[0].addEventListener('click', () => {
+
+                currentSlide--;
+
+                // LOOP BACK
+                if (currentSlide < 0) {
+
+                    currentSlide = totalSlides - 2;
+
+                }
+
+                slider.style.transform =
+                    `translateX(-${currentSlide * cardWidth}px)`;
+
+            });
+
+    
+    
     </script>
 </body>
 
