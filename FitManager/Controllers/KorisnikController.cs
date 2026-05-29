@@ -18,6 +18,13 @@ namespace FitManager.Controllers
         {
             _context = context;
         }
+        // Ubaceno novo
+
+        public IActionResult Profil()
+        {
+            return View();
+        }
+
 
         // GET: Korisnik
         public async Task<IActionResult> Index()

@@ -19,6 +19,13 @@ namespace FitManager.Controllers
             _context = context;
         }
 
+
+        // DODANO
+
+        public IActionResult MojaClanarina()
+        {
+            return View();
+        }
         // GET: Clanarina
         public async Task<IActionResult> Index()
         {
