@@ -1,0 +1,77 @@
+@startuml FitManager_DijagramKomponenti
+title FitManager - dijagram komponenti
+
+node "Klijentski uređaj\n(Web preglednik)" as Klijent {
+  component "HTTP klijent\n(Chrome / Edge / Firefox)" as Browser <<browser>>
+  component "HTML / CSS / JS\nrenderovanje" as Renderer
+  component "jQuery + Bootstrap\nbiblioteke" as ClientLibs
+}
+
+node "Web server\n(SmarterASP)" as WebServer {
+  package "FitManager aplikacija" as App {
+    component "MVC Kontroleri" as Controllers <<controllers>> {
+      component "KorisnikController" as KController
+      component "ClanarinaController" as CController
+      component "GrupniTreningController" as GTController
+      component "RezervacijaController" as RController
+      component "DolazakController" as DController
+      component "PlanTreningaController" as PTController
+      component "HomeController" as HController
+    }
+
+    component "Razor Pogledi (Views)" as Views <<views>>
+    component "Poslovna logika\n(Domen)" as Logic <<logic>>
+
+    component "Entity Framework Core\nORM" as EfCore <<efcore>>
+
+    component "ASP.NET Core Identity" as Identity <<identity>>
+
+    component "Email servis za\nobavještenja" as EmailSvc <<notification>>
+  }
+
+  package "Konfiguracija i resursi" as Config {
+    component "appsettings.json" as AppSettings
+    component "launchSettings.json" as LaunchSettings
+    component "wwwroot (CSS, JS, slike)" as WwwRoot
+    component "Migrations" as Migrations
+  }
+}
+
+node "SQL Server baza podataka\n(SmarterASP - SQL6034.site4now.net)" as DbServer {
+  database "FitManager baza\n(db_ac8e2a_fitmanager)" as Database <<database>> {
+    component "Korisnik + Identity\ntabele" as T_Korisnik
+    component "Clanarina + TipClanarine" as T_Clanarina
+    component "GrupniTrening + Rezervacija" as T_Trening
+    component "Dolazak + QRKod" as T_Dolazak
+    component "PlanTreninga" as T_Plan
+    component "Izvjestaj" as T_Izvjestaj
+    component "EmailObavjestenje" as T_Email
+  }
+}
+
+node "SMTP Email server" as SmtpServer {
+  component "SMTP servis" as Smtp <<external>>
+}
+
+interface "HTTP / HTTPS\n(REST)" as HttpInterface
+interface "ADO.NET / SQL\n(TDS protokol)" as SqlInterface
+interface "SMTP protokol" as SmtpInterface
+
+Browser ..> HttpInterface : šalje HTTP zahtjeve
+HttpInterface ..> Controllers : prima zahtjeve
+
+Controllers ..> Logic : koristi domensku logiku
+Controllers ..> Views : renderuje poglede
+Controllers ..> Identity : provjera autorizacije
+Logic ..> EfCore : perzistencija podataka
+EfCore ..> Identity : Identity tabelama
+EmailSvc ..> Logic : šalje notifikacije
+Views ..> WwwRoot : učitava statičke fajlove
+
+EfCore ..> SqlInterface : SQL upiti
+SqlInterface ..> Database : izvršava
+
+EmailSvc ..> SmtpInterface : slanje emaila
+SmtpInterface ..> Smtp : prosljeđuje
+
+@enduml

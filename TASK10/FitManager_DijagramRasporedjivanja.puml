@@ -1,0 +1,101 @@
+@startuml FitManager_DijagramRasporedjivanja
+title FitManager - dijagram raspoređivanja
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam wrapWidth 200
+skinparam defaultFontName Segoe UI
+skinparam node {
+  BackgroundColor #F0F4F8
+  BorderColor #315A7D
+  FontName Segoe UI
+  FontSize 11
+  FontColor #2C3E50
+}
+skinparam database {
+  BackgroundColor #E8F4E8
+  BorderColor #2E7D32
+  FontName Segoe UI
+  FontSize 11
+  FontColor #2C3E50
+}
+skinparam artifact {
+  BackgroundColor #FFF8DC
+  BorderColor #C8A23A
+  FontName Segoe UI
+  FontSize 10
+}
+skinparam actor {
+  BackgroundColor #F8FBFF
+  BorderColor #315A7D
+  FontColor #2C3E50
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #A6B5C4
+  FontName Segoe UI
+  FontSize 10
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C8A23A
+  FontName Segoe UI
+  FontSize 10
+}
+
+actor "Korisnik\n(Član / Trener / Admin)" as User
+
+node "Klijentski uređaj" as ClientNode {
+  rectangle "Web preglednik\n(Chrome, Edge, Firefox)" as Browser {
+    artifact "HTML/CSS/JS\nrenderovanje" as HtmlRender
+    artifact "jQuery + Bootstrap" as ClientFramework
+  }
+}
+
+node "Web server\n(SmarterASP.net)" as WebServer {
+  rectangle "ASP.NET Core 10.0\nRuntime" as DotNetRuntime
+
+  artifact "FitManager.dll" as AppDll <<deploy>>
+  artifact "FitManager.Views.dll" as ViewsDll <<deploy>>
+  artifact "appsettings.json" as AppSettings <<config>>
+  artifact "launchSettings.json" as LaunchSettings <<config>>
+
+  rectangle "wwwroot\n(Statički fajlovi)" as WwwRootArtifact {
+    artifact "CSS fajlovi" as CssArtifact
+    artifact "JavaScript fajlovi" as JsArtifact
+    artifact "Slike" as ImageArtifact
+    artifact "Lib (Bootstrap,\njQuery, validacija)" as LibArtifact
+  }
+}
+
+node "SQL Server\n(SmarterASP - SQL6034.site4now.net)" as DbNode {
+  database "SQL Server 2022" as SqlServerInstance {
+    artifact "FitManager baza\n(db_ac8e2a_fitmanager)" as FitManagerDb {
+      artifact "Tabele:\nKorisnik, QRKod, Clanarine,\nGrupniTrening, Rezervacija,\nDolazak, PlanTreninga,\nIzvjestaj, EmailObavjestenje" as DbTables
+      artifact "Identity tabele:\nAspNetRoles, AspNetUserRoles,\nAspNetUserClaims, ..." as IdentityTables
+      artifact "Migracije:\nEF Core migracije" as MigrationsArtifact
+    }
+  }
+}
+
+node "Email server" as EmailNode {
+  artifact "SMTP servis" as SmtpService <<external>>
+}
+
+User --> Browser : koristi \n
+
+Browser .[#4682B4].> WebServer : HTTPS (port 443)\nHTTP (port 80)
+
+DotNetRuntime .[#4682B4].> AppDll : pokreće
+AppDll .[#4682B4].> ViewsDll : učitava poglede
+AppDll .[#4682B4].> AppSettings : čita konfiguraciju
+AppDll .[#4682B4].> WwwRootArtifact : servira statičke fajlove
+
+WebServer .[#2E7D32].> DbNode : SQL port 1433
+
+AppDll ..> FitManagerDb : EF Core upiti\n(ADO.NET / TDS)
+
+WebServer .[#C8A23A].> EmailNode : SMTP\nport 587
+
+@enduml
