@@ -53,7 +53,7 @@ node "Klijentski uređaj" as ClientNode {
   }
 }
 
-node "Web server\n(SmarterASP.net)" as WebServer {
+node "Web server\n(Deployment)" as WebServer {
   rectangle "ASP.NET Core 10.0\nRuntime" as DotNetRuntime
 
   artifact "FitManager.dll" as AppDll <<deploy>>
