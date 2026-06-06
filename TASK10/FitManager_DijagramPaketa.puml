@@ -1,0 +1,62 @@
+@startuml FitManager_DijagramPaketa
+title FitManager - dijagram paketa
+
+skinparam linetype ortho
+
+package "Controllers" as P_Controllers <<MVC>> {
+  [HomeController]
+  [KorisnikController]
+  [ClanarinaController]
+  [GrupniTreningController]
+  [RezervacijaController]
+  [DolazakController]
+  [PlanTreningaController]
+}
+
+package "Models" as P_Models {
+  package "Entiteti" as P_Entities {
+    [Korisnik]
+    [QRKod]
+    [Clanarina]
+    [TipClanarine]
+    [GrupniTrening]
+    [Rezervacija]
+    [Dolazak]
+    [PlanTreninga]
+    [Izvjestaj]
+    [EmailObavjestenje]
+  }
+  package "DTO / Helperi" as P_Dtos {
+    [ProfilClana]
+    [Termin]
+    [ErrorViewModel]
+  }
+  package "Enumeracije" as P_Enums {
+    [UlogaKorisnika]
+    [StatusClanarine]
+    [TipClanarineNaziv]
+    [TipTreninga]
+    [StatusRezervacije]
+    [FitnessCilj]
+    [Intenzitet]
+    [BmiKategorija]
+    [TipIzvjestaja]
+    [StatusObavjestenja]
+  }
+}
+
+package "Views" as P_Views {
+  [DolasciView]
+  [ClanoviView]
+  [RezervacijeView]
+  [RasporedTreningaView]
+  [ClanarineView]
+  [PlanoviTreningaView]
+  [IzvjestajView]
+}
+
+P_Controllers ..> P_Models : <<import>>
+
+P_Controllers ..> P_Views : <<import>>
+
+@enduml

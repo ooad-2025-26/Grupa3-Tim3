@@ -1,0 +1,15 @@
+
+Task 10
+Completion requirements
+Deseti projektni zadatak
+
+Paterni ponašanja
+
+Potrebno je kreirati dokument u kojem se objašnjava potreba za dodavanjem paterna ponašanja u postojeći sistem. 
+
+Dijagrami komponenti, paketa i raspoređivanja
+
+Potrebno je dizajnirati i detaljno razraditi dijagrame komponenti, paketa i raspoređivanja sistema.
+
+Rok za izradu prve verzije projektnog zadatka: 24 h prije 11. laboratorijske vježbe (sedmica 01.-07.6.)
+Last modified: Monday, 25 May 2026, 10:10 AM
