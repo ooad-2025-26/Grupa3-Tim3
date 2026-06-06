@@ -1,0 +1,129 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.plan-page {
+    min-height: 100vh;
+    background-color: #f7f7f7;
+}
+
+.top-section {
+    position: relative;
+    background-color: #C5C408;
+    padding: 28px 40px;
+    text-align: center;
+}
+
+    .top-section h1 {
+        margin: 0;
+        color: #000;
+        font-size: 32px;
+        font-weight: 600;
+    }
+
+.back-button {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000;
+    font-size: 34px;
+    text-decoration: none;
+}
+
+.plan-header {
+    padding: 30px 24px 10px;
+}
+
+    .plan-header h2 {
+        margin: 0 0 18px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+.create-button {
+    display: inline-block;
+    background-color: #C5C408;
+    color: #000;
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.plan-list {
+    padding: 20px 24px;
+}
+
+.plan-card {
+    background-color: #fff;
+    padding: 22px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+    .plan-card h3 {
+        margin: 0 0 14px;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .plan-card p {
+        margin: 8px 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+.weekly-plan {
+    margin-top: 16px;
+    background-color: #f2f2f2;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.plan-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+    .plan-actions a {
+        color: #000;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+.delete-link {
+    color: #b00020 !important;
+}
+.plan-form {
+    background: #fff;
+    padding: 22px;
+    border-radius: 16px;
+    margin: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+    .plan-form input,
+    .plan-form textarea {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .plan-form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }

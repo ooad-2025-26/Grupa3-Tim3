@@ -1,53 +1,61 @@
 ﻿@model IEnumerable<FitManager.Models.Rezervacija>
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = null;
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/rezervacija.css" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Clan)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GrupniTrening)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumKreiranja)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Clan.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GrupniTrening.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumKreiranja)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="rezervacija-page">
+
+    <section class="top-section">
+        <a href="@Url.Action("Index", "Home")" class="back-button">←</a>
+        <h1>Rezervacije</h1>
+    </section>
+
+    <section class="calendar-section">
+
+        <div class="calendar-header">
+            <button type="button" class="calendar-arrow">←</button>
+            <h2>Juni 2026</h2>
+            <button type="button" class="calendar-arrow">→</button>
+        </div>
+
+        <div class="calendar-grid">
+            <div class="day-name">Pon</div>
+            <div class="day-name">Uto</div>
+            <div class="day-name">Sri</div>
+            <div class="day-name">Čet</div>
+            <div class="day-name">Pet</div>
+            <div class="day-name">Sub</div>
+            <div class="day-name">Ned</div>
+
+            <button type="button" class="day">1</button>
+            <button type="button" class="day">2</button>
+            <button type="button" class="day">3</button>
+            <button type="button" class="day active">4</button>
+            <button type="button" class="day">5</button>
+            <button type="button" class="day">6</button>
+            <button type="button" class="day">7</button>
+
+            <button type="button" class="day">8</button>
+            <button type="button" class="day">9</button>
+            <button type="button" class="day">10</button>
+            <button type="button" class="day">11</button>
+            <button type="button" class="day">12</button>
+            <button type="button" class="day">13</button>
+            <button type="button" class="day">14</button>
+        </div>
+
+        <div class="reservation-box">
+            <h3>Odabrani datum</h3>
+            <p>04.06.2026</p>
+
+            <button type="button" class="reserve-button">
+                Rezerviši termin
+            </button>
+        </div>
+
+    </section>
+
+</div>

@@ -2,4 +2,33 @@
     Layout = null;
 }
 
-<h1>Moja članarina</h1>
+<link rel="stylesheet" href="~/css/mojaclanarina.css" />
+
+<div class="moja-clanarina-page">
+
+    <section class="top-section">
+        <a href="@Url.Action("Index", "Home")" class="back-button">
+            ←
+        </a>
+
+        <h1>Članska kartica</h1>
+    </section>
+
+    <section class="qr-section">
+        <div class="qr-card">
+            <img src="/images/QR.png"
+                 alt="QR kod"
+                 class="qr-image" />
+        </div>
+    </section>
+
+    <section class="paket-section">
+        <h2>PAKET</h2>
+    </section>
+
+    <section class="clanarina-info">
+        <p>Članarina: <span>Tip članarine</span></p>
+        <p>Datum: <span>Početak trajanja</span></p>
+        <p>Istek: <span>Datum isteka</span></p>
+    </section>
+</div>

@@ -1,0 +1,62 @@
+﻿@model IEnumerable<FitManager.Models.PlanTreninga>
+
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/css/plantreninga.css" />
+
+<div class="plan-page">
+
+    <section class="top-section">
+        <a href="@Url.Action("Index", "Home")" class="back-button">←</a>
+        <h1>Plan treninga</h1>
+    </section>
+
+    <section class="plan-header">
+        <h2>Moj plan treninga</h2>
+
+        <form class="plan-form">
+            <input type="text" placeholder="Fitness cilj" />
+            <input type="text" placeholder="BMI" />
+            <input type="text" placeholder="BMI kategorija" />
+            <input type="text" placeholder="Intenzitet" />
+
+            <textarea placeholder="Sedmični plan"></textarea>
+
+            <button type="button" class="create-button">
+                Kreiraj plan
+            </button>
+        </form>
+    </section>
+
+    <section class="plan-list">
+
+        @foreach (var item in Model)
+        {
+            <div class="plan-card">
+
+                <h3>@item.FitnessCilj</h3>
+
+                <p><strong>BMI:</strong> @item.Bmi</p>
+                <p><strong>Kategorija:</strong> @item.BmiKategorija</p>
+                <p><strong>Intenzitet:</strong> @item.Intenzitet</p>
+                <p><strong>Datum:</strong> @item.DatumKreiranja</p>
+
+                <div class="weekly-plan">
+                    <strong>Sedmični plan:</strong>
+                    <p>@item.SedmicniPlan</p>
+                </div>
+
+                <div class="plan-actions">
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="delete-link">Obriši</a>
+                </div>
+
+            </div>
+        }
+
+    </section>
+
+</div>

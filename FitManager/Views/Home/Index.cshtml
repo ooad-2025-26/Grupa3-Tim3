@@ -46,11 +46,11 @@
 
                 <a href="/" class="nav-link">Početna</a>
 
-                <a href="#" class="nav-link">O nama</a>
+                <a href="/#third" class="nav-link">O nama</a>
 
-                <a href="#" class="nav-link">Cijena</a>
+                <a href="/#plans-section" class="nav-link">Cijena</a>
 
-                <a href="#" class="nav-link">Kontakt</a>
+                <a href="javascript:void(0)" class="nav-link" onclick="openContactModal()">Kontakt</a>
 
             </div>
 
@@ -81,21 +81,28 @@
                         Moja članarina
                     </a>
 
-                    <a href="#" class="dropdown-item">
+                    <a href="/Rezervacija/Index" class="dropdown-item">
                         Rezervacije
                     </a>
 
-                    <a href="#" class="dropdown-item">
+                    <a href="/PlanTreninga/Index" class="dropdown-item">
                         Plan treninga
                     </a>
 
-                    <a href="#" class="dropdown-item">
+                    <a href="/Admin/Index" class="dropdown-item">
                         Admin
                     </a>
 
-                    <a href="#" class="dropdown-item">
-                        Odjavi se
-                    </a>
+                 
+
+                    <form asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="/"
+                          method="post">
+                        <button type="submit" class="dropdown-item logout-button">
+                            Odjavi se
+                        </button>
+                    </form>
 
                 </div>
             </div>
@@ -202,7 +209,7 @@
     </section>
 
     <!-- THIRD SECTION -->
-    <section class="third-section">
+    <section id="third" class="third-section">
 
         <div class="info-frame">
 
@@ -641,9 +648,30 @@
 
             });
 
+                    
+            function openContactModal() {
+                document.getElementById("contactModal").style.display = "flex";
+            }
+
+            function closeContactModal() {
+                document.getElementById("contactModal").style.display = "none";
+            }
     
     
     </script>
+
+    <div id="contactModal" class="modal-overlay">
+        <div class="contact-modal">
+            <button class="modal-close" onclick="closeContactModal()">×</button>
+
+            <h2>Kontakt</h2>
+
+            <p><strong>Email:</strong> fitmanager@gmail.com</p>
+            <p><strong>Telefon:</strong> +387 61 123 456</p>
+            <p><strong>Lokacija:</strong> Sarajevo, BiH</p>
+            <p><strong>Radno vrijeme:</strong> 08:00 - 22:00</p>
+        </div>
+    </div>
 </body>
 
 </html>

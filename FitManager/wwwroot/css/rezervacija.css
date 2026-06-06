@@ -1,0 +1,125 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.rezervacija-page {
+    min-height: 100vh;
+    background-color: #f7f7f7;
+}
+
+.top-section {
+    position: relative;
+    background-color: #C5C408;
+    padding: 28px 40px;
+    text-align: center;
+}
+
+    .top-section h1 {
+        margin: 0;
+        color: #000;
+        font-size: 32px;
+        font-weight: 600;
+    }
+
+.back-button {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000;
+    font-size: 34px;
+    text-decoration: none;
+}
+
+.calendar-section {
+    padding: 30px 24px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+    .calendar-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+.calendar-arrow {
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 50%;
+    background-color: #C5C408;
+    color: #000;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    text-align: center;
+}
+
+.day-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+}
+
+.day {
+    border: none;
+    background-color: #fff;
+    padding: 18px 0;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+    .day.active {
+        background-color: #C5C408;
+        font-weight: 700;
+    }
+
+.reservation-box {
+    margin-top: 30px;
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 16px;
+}
+
+    .reservation-box h3 {
+        margin: 0 0 8px;
+        font-size: 22px;
+    }
+
+    .reservation-box p {
+        margin: 0 0 20px;
+        font-size: 18px;
+    }
+
+.reserve-button {
+    display: block;
+    width: 100%;
+    background-color: #C5C408;
+    color: #000;
+    text-align: center;
+    text-decoration: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+}

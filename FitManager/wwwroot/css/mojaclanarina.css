@@ -1,0 +1,86 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.moja-clanarina-page {
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+.top-section {
+    position: relative;
+    background-color: #C5C408;
+    padding: 28px 40px;
+    text-align: center;
+}
+
+    .top-section h1 {
+        margin: 0;
+        color: #000;
+        font-size: 32px;
+        font-weight: 600;
+    }
+
+.back-button {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000;
+    font-size: 34px;
+    line-height: 1;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    .back-button:hover {
+        color: #333;
+    }
+
+.qr-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.qr-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-image {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+}
+
+.paket-section {
+    background-color: #C5C408;
+    padding: 18px 40px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+    .paket-section h2 {
+        margin: 0;
+        color: #000;
+        font-size: 40px;
+        font-weight: 600;
+    }
+
+.clanarina-info {
+    width: 360px;
+    margin: 14px auto 0;
+    text-align: left;
+    font-size: 22px;
+    line-height: 1.45;
+    color: #222;
+}
+
+    .clanarina-info p {
+        margin: 32px 0;
+    }

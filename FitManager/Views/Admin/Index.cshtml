@@ -1,0 +1,69 @@
+﻿@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/css/admin.css" />
+
+<div class="admin-page">
+
+    <section class="top-section">
+        <a href="@Url.Action("Index", "Home")" class="back-button">←</a>
+        <h1>Admin panel</h1>
+    </section>
+
+    <section class="filter-section">
+        <h2>Odaberi vremenski period</h2>
+
+        <div class="filter-form">
+           
+            <input type="date" />
+            <button>Generiši izvještaj</button>
+        </div>
+    </section>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span>Ukupni prihod</span>
+            <h3>2.450 KM</h3>
+        </div>
+
+        <div class="stat-card">
+            <span>Novi članovi</span>
+            <h3>34</h3>
+        </div>
+
+        <div class="stat-card">
+            <span>Broj rezervacija</span>
+            <h3>128</h3>
+        </div>
+    </section>
+
+    <section class="admin-content">
+        <div class="active-members">
+            <h2>Najaktivniji članovi</h2>
+
+            <div class="member-row">
+                <span>adnan@email.com</span>
+                <strong>18 rezervacija</strong>
+            </div>
+
+            <div class="member-row">
+                <span>test@email.com</span>
+                <strong>14 rezervacija</strong>
+            </div>
+        </div>
+
+        <div class="alerts-box">
+            <h2>Upozorenja</h2>
+
+            <div class="alert warning">
+                Nagli porast članarina u ovom periodu.
+            </div>
+
+            <div class="alert danger">
+                Pad broja rezervacija u odnosu na prethodni period.
+            </div>
+        </div>
+    </section>
+
+</div>

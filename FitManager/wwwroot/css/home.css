@@ -783,3 +783,68 @@ body {
         font-size: 32px;
     }
 }
+
+.logout-button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    color: #C5C408;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.contact-modal {
+    position: relative;
+    background: #111;
+    color: white;
+    width: 420px;
+    max-width: 90%;
+    padding: 32px;
+    border-radius: 18px;
+    font-family: 'Poppins', sans-serif;
+}
+
+    .contact-modal h2 {
+        margin-top: 0;
+        color: #C5C408;
+        font-size: 30px;
+    }
+
+    .contact-modal p {
+        font-size: 17px;
+        margin: 14px 0;
+    }
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: #C5C408;
+    font-size: 30px;
+    cursor: pointer;
+}
