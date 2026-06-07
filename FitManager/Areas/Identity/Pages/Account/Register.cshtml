@@ -39,44 +39,73 @@
                 Registracija korisnika
             </h1>
 
-            <p class="input-label">
-                Unesite ime i prezime
-            </p>
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <input type="text"
-                   class="custom-input"
-                   placeholder="Ime i prezime" />
+                <p class="input-label">
+                    Unesite vašu e-mail adresu
+                </p>
 
-            <p class="input-label">
-                Unesite vašu e-mail adresu
-            </p>
+                <input asp-for="Input.Email"
+                       type="email"
+                       class="custom-input"
+                       placeholder="E-mail adresa" />
 
-            <input type="email"
-                   class="custom-input"
-                   placeholder="E-mail adresa" />
 
-            <!-- PASSWORD -->
-            <p class="input-label">
-                Unesite vašu šifru
-            </p>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
 
-            <input type="password"
-                   class="custom-input"
-                   placeholder="Unesite vašu šifru" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
 
-            <!-- BUTTON -->
-            <button class="register-button">
-                Registruj se
-            </button>
+                <p class="input-label">
+                    Unesite broj telefona
+                </p>
+
+                <input asp-for="Input.Telefon"
+                       type="text"
+                       class="custom-input"
+                       placeholder="Broj telefona" />
+
+                <span asp-validation-for="Input.Telefon" class="text-danger"></span>
+
+                <p class="input-label">
+                    Unesite vašu šifru
+                </p>
+
+                <input asp-for="Input.Password"
+                       type="password"
+                       class="custom-input"
+                       placeholder="Unesite vašu šifru" />
+
+
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+                <p class="input-label">
+                    Potvrdite vašu šifru
+                </p>
+
+                <input asp-for="Input.ConfirmPassword"
+                       type="password"
+                       class="custom-input"
+                       placeholder="Potvrdite vašu šifru" />
+
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+                <button type="submit" class="register-button">
+                    Registruj se
+                </button>
+
+            </form>
 
         </div>
 
     </div>
     <div class="bottom-bar"></div>
+
+    <partial name="_ValidationScriptsPartial" />
 </body>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+
+    
+
 
 </html>

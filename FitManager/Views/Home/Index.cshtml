@@ -56,12 +56,24 @@
 
             <!-- RIGHT -->
             <div class="nav-right">
-                <a href="/Identity/Account/Login"
-                   class="login-button">
-
-                    Prijavi se
-
-                </a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="/"
+                          method="post">
+                        <button type="submit" class="login-button">
+                            Odjavi se
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a href="/Identity/Account/Login"
+                       class="login-button">
+                        Prijavi se
+                    </a>
+                }
 
                 <!-- HAMBURGER -->
                 <div class="hamburger-menu">

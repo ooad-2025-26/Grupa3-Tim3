@@ -129,7 +129,7 @@ namespace FitManager.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Pogresan e-mail ili sifra.");
                     return Page();
                 }
             }

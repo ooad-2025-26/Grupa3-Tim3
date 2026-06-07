@@ -37,7 +37,7 @@
 
         </div>
 
-        
+        <!-- DESNA STRANA -->
         <div class="right-side">
             
             <a href="/">
@@ -50,48 +50,61 @@
             <h2 class="welcome-text">
                 Dobro Došli u FitManager
             </h2>
-           
-            <div class="input-box">
 
-                <img src="/images/user.png" alt="User Icon" class="input-icon">
-                <input type="email" placeholder="Unesite vaš e-mail">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            </div>
+                <div class="input-box">
+                    <img src="/images/user.png" alt="User Icon" class="input-icon">
 
-            <div class="input-box">
+                    <input asp-for="Input.Email"
+                           type="email"
+                           placeholder="Unesite vaš e-mail" />
+                </div>
 
-                <img src="/images/lock.png"
-                     alt="Lock Icon"
-                     class="input-icon">
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
 
-                <input type="password"
-                       placeholder="Unesite vašu šifru">
+                <div class="input-box">
+                    <img src="/images/lock.png"
+                         alt="Lock Icon"
+                         class="input-icon">
 
-            </div>
+                    <input asp-for="Input.Password"
+                           type="password"
+                           placeholder="Unesite vašu šifru" />
+                </div>
 
-            <div class="button-group">
 
-                <button class="login-button">
-                    Prijavi se
-                </button>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
 
-               
-                    
-                     <a href="/Identity/Account/Register"
-                   class="register-button">
+                <div class="button-group">
+
+                    <button type="submit" class="login-button">
+                        Prijavi se
+                    </button>
+
+                    <a href="/Identity/Account/Register"
+                       class="register-button">
                         Registruj se
-                        </a>
-               
+                    </a>
 
-            </div>
+                </div>
+
+
+
+            </form>
+           
+            
         </div>
 
     </div>
+
+    <partial name="_ValidationScriptsPartial" />
+
 
 </body>
 
 </html>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+
+   
