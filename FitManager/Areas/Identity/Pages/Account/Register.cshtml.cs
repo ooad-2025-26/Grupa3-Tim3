@@ -63,7 +63,7 @@ namespace FitManager.Areas.Identity.Pages.Account
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Compare("Password", ErrorMessage = "Sifra i potvrda sifre se ne podudaraju.")]
             public string ConfirmPassword { get; set; }
         }
 
