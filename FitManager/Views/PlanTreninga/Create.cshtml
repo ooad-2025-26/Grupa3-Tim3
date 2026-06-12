@@ -1,62 +1,152 @@
 ﻿@model FitManager.Models.PlanTreninga
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Kreiraj plan treninga";
 }
 
-<h1>Create</h1>
-
-<h4>PlanTreninga</h4>
+<h1>Kreiraj plan treninga</h1>
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FitnessCilj" class="control-label"></label>
-                <select asp-for="FitnessCilj" class="form-control"></select>
-                <span asp-validation-for="FitnessCilj" class="text-danger"></span>
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            <label for="FitnessCilj" class="control-label">Fitness cilj</label>
+            <select id="FitnessCilj" class="form-control">
+                <option value="0">Mršavljenje</option>
+                <option value="1">Jačanje</option>
+                <option value="2">Izdržljivost</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="Bmi" class="control-label">BMI</label>
+            <input type="number" step="0.01" id="Bmi" class="form-control" placeholder="npr. 22.5" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="BmiKategorija" class="control-label">BMI Kategorija</label>
+            <select id="BmiKategorija" class="form-control">
+                <option value="0">Pothranjenost</option>
+                <option value="1">Normalna težina</option>
+                <option value="2">Prekomjerna težina</option>
+                <option value="3">Gojaznost</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="Intenzitet" class="control-label">Intenzitet</label>
+            <select id="Intenzitet" class="form-control">
+                <option value="0">Lagan</option>
+                <option value="1">Umjeren</option>
+                <option value="2">Intenzivan</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="ClanId" class="control-label">Član</label>
+            <select id="ClanId" class="form-control" asp-items="ViewBag.ClanId">
+                <option value="">-- Odaberi člana --</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <button type="button" id="generate-plan" class="btn btn-primary">Generiši plan</button>
+        </div>
+
+        <div id="plan-result-box" style="display:none;">
+            <div class="form-group mb-3">
+                <label for="SedmicniPlan" class="control-label">Sedmični plan</label>
+                <textarea id="SedmicniPlan" class="form-control" rows="12" readonly></textarea>
             </div>
-            <div class="form-group">
-                <label asp-for="Bmi" class="control-label"></label>
-                <input asp-for="Bmi" class="form-control" />
-                <span asp-validation-for="Bmi" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <button type="button" id="save-plan" class="btn btn-success">Sačuvaj plan</button>
             </div>
-            <div class="form-group">
-                <label asp-for="BmiKategorija" class="control-label"></label>
-                <select asp-for="BmiKategorija" class="form-control"></select>
-                <span asp-validation-for="BmiKategorija" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Intenzitet" class="control-label"></label>
-                <select asp-for="Intenzitet" class="form-control"></select>
-                <span asp-validation-for="Intenzitet" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SedmicniPlan" class="control-label"></label>
-                <input asp-for="SedmicniPlan" class="form-control" />
-                <span asp-validation-for="SedmicniPlan" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatumKreiranja" class="control-label"></label>
-                <input asp-for="DatumKreiranja" class="form-control" />
-                <span asp-validation-for="DatumKreiranja" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClanId" class="control-label"></label>
-                <select asp-for="ClanId" class ="form-control" asp-items="ViewBag.ClanId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+
+        <div id="plan-message" style="margin-top:10px; font-weight:bold;"></div>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Nazad na listu</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const gen = document.getElementById('generate-plan');
+        const saveBtn = document.getElementById('save-plan');
+        const message = document.getElementById('plan-message');
+        const planResultBox = document.getElementById('plan-result-box');
+        let generatedPlan = null;
+
+        function showMessage(msg, ok) {
+            message.style.color = ok ? 'green' : 'red';
+            message.textContent = msg;
+        }
+
+        function buildPayload() {
+            return {
+                fitnessCilj: parseInt(document.getElementById('FitnessCilj').value),
+                bmi: parseFloat(document.getElementById('Bmi').value) || 0,
+                bmiKategorija: parseInt(document.getElementById('BmiKategorija').value),
+                intenzitet: parseInt(document.getElementById('Intenzitet').value),
+                clanId: document.getElementById('ClanId').value
+            };
+        }
+
+        gen.addEventListener('click', async function () {
+            message.textContent = '';
+            planResultBox.style.display = 'none';
+            gen.disabled = true;
+
+            const payload = buildPayload();
+
+            if (!payload.clanId) {
+                showMessage('Odaberi člana.', false);
+                gen.disabled = false;
+                return;
+            }
+            if (!payload.bmi || payload.bmi <= 0) {
+                showMessage('Unesi ispravan BMI.', false);
+                gen.disabled = false;
+                return;
+            }
+
+            try {
+                const r = await fetch('/api/Api/training-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await r.json();
+
+                if (!r.ok) {
+                    showMessage(data.message || 'Greška pri kreiranju plana.', false);
+                    return;
+                }
+
+                generatedPlan = data;
+                document.getElementById('SedmicniPlan').value = data.sedmicniPlan || '';
+                planResultBox.style.display = 'block';
+                showMessage('Plan uspješno generisan i sačuvan! Možeš ga pregledati ispod.', true);
+
+            } catch (e) {
+                console.error(e);
+                showMessage('Greška sa serverom.', false);
+            } finally {
+                gen.disabled = false;
+            }
+        });
+
+        saveBtn.addEventListener('click', function () {
+            if (generatedPlan && generatedPlan.id) {
+                window.location = '/PlanTreninga/Details/' + generatedPlan.id;
+            }
+        });
+    });
+    </script>
 }

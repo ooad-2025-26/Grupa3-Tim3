@@ -16,7 +16,7 @@
 
     <section class="qr-section">
         <div class="qr-card">
-            <img src="/images/QR.png"
+            <img id="qr-image" src="/images/QR.png"
                  alt="QR kod"
                  class="qr-image" />
         </div>
@@ -27,8 +27,27 @@
     </section>
 
     <section class="clanarina-info">
-        <p>Članarina: <span>Tip članarine</span></p>
-        <p>Datum: <span>Početak trajanja</span></p>
-        <p>Istek: <span>Datum isteka</span></p>
+        <p>Članarina: <span id="tip">Tip članarine</span></p>
+        <p>Datum: <span id="pocetak">Početak trajanja</span></p>
+        <p>Istek: <span id="istek">Datum isteka</span></p>
     </section>
+
+    <script>
+        (function(){
+            const userId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)";
+            if(!userId) return;
+            async function load(){
+                const res = await fetch('/api/Api/membership/' + userId);
+                if(!res.ok) return;
+                const data = await res.json();
+                document.getElementById('tip').textContent = data.tip || '';
+                document.getElementById('pocetak').textContent = new Date(data.datumpocetka).toLocaleDateString();
+                document.getElementById('istek').textContent = new Date(data.datumisteka).toLocaleDateString();
+                if(data.qrbase64){
+                    document.getElementById('qr-image').src = 'data:image/png;base64,' + data.qrbase64;
+                }
+            }
+            load();
+        })();
+    </script>
 </div>

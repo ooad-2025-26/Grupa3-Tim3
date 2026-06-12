@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" id="reservation-form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ClanId" class="control-label"></label>
@@ -31,11 +31,42 @@
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" id="create-btn" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    (function(){
+        const treningSelect = document.querySelector('select[asp-for="GrupniTreningId"]');
+        const createBtn = document.getElementById('create-btn');
+
+        async function checkAvailability(id){
+            if(!id) return true;
+            const res = await fetch('/GrupniTrening/Details/' + id);
+            if(!res.ok) return true;
+            const text = await res.text();
+            // crude check: look for SlobodnaMjesta value in details page
+            const match = text.match(/SlobodnaMjesta\D*(\d+)/i);
+            if(match && parseInt(match[1],10) <= 0){
+                return false;
+            }
+            return true;
+        }
+
+        treningSelect.addEventListener('change', async function(){
+            const ok = await checkAvailability(this.value);
+            createBtn.disabled = !ok;
+            if(!ok) alert('Termin je trenutno pun.');
+        });
+
+        // initial
+        if(treningSelect.value){
+            checkAvailability(treningSelect.value).then(ok => createBtn.disabled = !ok);
+        }
+    })();
+</script>
 
 <div>
     <a asp-action="Index">Back to List</a>

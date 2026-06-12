@@ -10,6 +10,8 @@ using FitManager.Models;
 
 namespace FitManager.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+
     public class RezervacijaController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,10 +22,24 @@ namespace FitManager.Controllers
         }
 
         // GET: Rezervacija
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Rezervacije.Include(r => r.Clan).Include(r => r.GrupniTrening);
-            return View(await applicationDbContext.ToListAsync());
+            // CLAN users should see the calendar/client reservation UI (no list of all reservations)
+            if (User.IsInRole("CLAN"))
+            {
+                return View();
+            }
+
+            // ADMIN and TRENER can view the list of reservations
+            if (User.IsInRole("ADMIN") || User.IsInRole("TRENER"))
+            {
+                var applicationDbContext = _context.Rezervacije.Include(r => r.Clan).Include(r => r.GrupniTrening);
+                return View(await applicationDbContext.ToListAsync());
+            }
+
+            // other authenticated roles are forbidden from this page
+            return Forbid();
         }
 
         // GET: Rezervacija/Details/5
@@ -47,6 +63,7 @@ namespace FitManager.Controllers
         }
 
         // GET: Rezervacija/Create
+        [Authorize(Roles = "ADMIN")]
         public IActionResult Create()
         {
             ViewData["ClanId"] = new SelectList(_context.Korisnici, "Id", "Email");
@@ -59,13 +76,42 @@ namespace FitManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Create([Bind("Id,ClanId,GrupniTreningId,DatumKreiranja,Status")] Rezervacija rezervacija)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(rezervacija);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var trening = await _context.GrupniTreninzi.FindAsync(rezervacija.GrupniTreningId);
+                if (trening == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Odabrani trening ne postoji.");
+                }
+                else
+                {
+                    // check capacity
+                    if (!trening.ImaSlobodnihMjesta())
+                    {
+                        ModelState.AddModelError(string.Empty, "Termin je pun.");
+                    }
+                    else
+                    {
+                        // ensure unique reservation for user+trening
+                        var exists = await _context.Rezervacije.AnyAsync(r => r.ClanId == rezervacija.ClanId && r.GrupniTreningId == rezervacija.GrupniTreningId && r.Status == StatusRezervacije.AKTIVNA);
+                        if (exists)
+                        {
+                            ModelState.AddModelError(string.Empty, "Već imate rezervaciju za ovaj termin.");
+                        }
+                        else
+                        {
+                                trening.RezervisiMjesto();
+                                _context.Update(trening);
+                                rezervacija.DatumKreiranja = DateTime.Now;
+                                _context.Add(rezervacija);
+                                await _context.SaveChangesAsync();
+                                return RedirectToAction(nameof(Index));
+                        }
+                    }
+                }
             }
             ViewData["ClanId"] = new SelectList(_context.Korisnici, "Id", "Email", rezervacija.ClanId);
             ViewData["GrupniTreningId"] = new SelectList(_context.GrupniTreninzi, "Id", "Naziv", rezervacija.GrupniTreningId);
@@ -73,6 +119,7 @@ namespace FitManager.Controllers
         }
 
         // GET: Rezervacija/Edit/5
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -95,6 +142,7 @@ namespace FitManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ClanId,GrupniTreningId,DatumKreiranja,Status")] Rezervacija rezervacija)
         {
             if (id != rezervacija.Id)
@@ -128,6 +176,7 @@ namespace FitManager.Controllers
         }
 
         // GET: Rezervacija/Delete/5
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,6 +199,7 @@ namespace FitManager.Controllers
         // POST: Rezervacija/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMIN")] // only admin can delete via MVC
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var rezervacija = await _context.Rezervacije.FindAsync(id);

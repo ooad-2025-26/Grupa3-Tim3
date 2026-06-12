@@ -80,6 +80,13 @@ namespace FitManager.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                // prevent duplicate email
+                var existing = await _userManager.FindByEmailAsync(Input.Email);
+                if(existing != null)
+                {
+                    ModelState.AddModelError(string.Empty, "Korisnik sa ovom email adresom već postoji.");
+                    return Page();
+                }
                 var user = CreateUser();
 
                 user.Telefon = Input.Telefon;

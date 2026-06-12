@@ -2,15 +2,41 @@
 @inject SignInManager<Korisnik> SignInManager
 @inject UserManager<Korisnik> UserManager
 
+@{
+    var isSigned = SignInManager.IsSignedIn(User);
+    var isAdmin = User.IsInRole("ADMIN");
+    var isTrener = User.IsInRole("TRENER");
+    var isClan = User.IsInRole("CLAN");
+}
+
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
+@if (isSigned)
 {
     <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Moj profil (@User.Identity?.Name)</a>
     </li>
+
+    @if (isAdmin)
+    {
+        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">ADMIN</a></li>
+    }
+
+    @if (isTrener && !isAdmin)
+    {
+        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Rezervacija" asp-action="Index">Rezervacije</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" asp-controller="PlanTreninga" asp-action="Index">Plan treninga</a></li>
+    }
+
+    @if (isClan && !isAdmin && !isTrener)
+    {
+        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Rezervacija" asp-action="Index">Rezervacije</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" asp-controller="PlanTreninga" asp-action="Create">Plan treninga</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Clanarina" asp-action="MojaClanarina">Moja članarina</a></li>
+    }
+
     <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
         </form>
     </li>
 }

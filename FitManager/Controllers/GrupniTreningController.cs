@@ -61,6 +61,16 @@ namespace FitManager.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Ensure initial available slots are consistent
+                if (grupniTrening.SlobodnaMjesta <= 0)
+                {
+                    grupniTrening.SlobodnaMjesta = grupniTrening.MaksKapacitet;
+                }
+                if (grupniTrening.SlobodnaMjesta > grupniTrening.MaksKapacitet)
+                {
+                    grupniTrening.SlobodnaMjesta = grupniTrening.MaksKapacitet;
+                }
+
                 _context.Add(grupniTrening);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,6 +112,10 @@ namespace FitManager.Controllers
             {
                 try
                 {
+                    // Normalize available slots
+                    if (grupniTrening.SlobodnaMjesta < 0) grupniTrening.SlobodnaMjesta = 0;
+                    if (grupniTrening.SlobodnaMjesta > grupniTrening.MaksKapacitet) grupniTrening.SlobodnaMjesta = grupniTrening.MaksKapacitet;
+
                     _context.Update(grupniTrening);
                     await _context.SaveChangesAsync();
                 }

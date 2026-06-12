@@ -2,6 +2,8 @@
     Layout = null;
 }
 
+@using System.Security.Claims
+
 <!DOCTYPE html>
 <html>
 
@@ -37,36 +39,116 @@
              class="profile-avatar" />
 
         <h2 class="profile-card-name">
-            Niko Nikić
+            <span id="display-name">--</span>
         </h2>
 
         <div class="form-group">
             <label>Korisničko ime</label>
-            <input type="text">
+            <input type="text" id="username" class="form-control" />
         </div>
 
         <div class="form-group">
             <label>E-mail</label>
-            <input type="email">
+            <input type="email" id="email" class="form-control" />
         </div>
 
         <div class="form-group">
             <label>Lozinka</label>
-            <input type="password">
+            <input type="password" id="currentPassword" class="form-control" />
         </div>
 
         <div class="form-group">
             <label>Potvrda lozinke</label>
-            <input type="password">
+            <input type="password" id="newPassword" class="form-control" />
         </div>
 
-        <button class="save-btn">
+        <button id="save-btn" class="save-btn btn btn-primary">
             Sačuvaj promjene
         </button>
 
-        <a href="#" class="delete-link">
+        <a href="#" id="delete-link" class="delete-link text-danger">
             Obriši nalog
         </a>
+
+    </div>
+
+    <script>
+        (function(){
+            const userId = "@(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)";
+            if(!userId){
+                console.warn('User not authenticated');
+                return;
+            }
+
+            const displayName = document.getElementById('display-name');
+            const username = document.getElementById('username');
+            const email = document.getElementById('email');
+            const currentPasswordInput = document.getElementById('currentPassword');
+            const newPasswordInput = document.getElementById('newPassword');
+            const saveBtn = document.getElementById('save-btn');
+            const deleteLink = document.getElementById('delete-link');
+
+            async function loadProfile(){
+                const res = await fetch('/api/Api/profile/' + userId);
+                if(!res.ok) return;
+                const data = await res.json();
+                displayName.textContent = data.ime + ' ' + data.prezime;
+                username.value = data.username || '';
+                email.value = data.email || '';
+            }
+
+            saveBtn.addEventListener('click', async function(){
+                const payload = {
+                    Username: username.value,
+                    Email: email.value,
+                    // Lozinka (first field) and Potvrda lozinke (second field) are used as new password + confirmation
+                    NewPassword: currentPasswordInput.value,
+                    ConfirmPassword: newPasswordInput.value,
+                    Profil: {
+                        Ime: document.getElementById('display-name').textContent.split(' ')[0] || '',
+                        Prezime: document.getElementById('display-name').textContent.split(' ')[1] || '',
+                        Telefon: '',
+                        DatumRodjenja: new Date().toISOString()
+                    }
+                };
+                const res = await fetch('/api/Api/profile/' + userId, {
+                    method: 'PUT',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                if(res.ok){
+                    const updateData = await res.json().catch(()=>null);
+                    if(updateData){
+                        username.value = updateData.username || username.value;
+                        email.value = updateData.email || email.value;
+                    }
+                    alert('Profil je sačuvan.');
+                    // refresh displayed data and clear password fields
+                    await loadProfile();
+                    currentPasswordInput.value = '';
+                    newPasswordInput.value = '';
+                } else {
+                    const data = await res.json().catch(()=>null);
+                    if(data && data.errors) alert('Greška: ' + data.errors.join('; '));
+                    else alert('Greška pri spremanju profila.');
+                }
+            });
+
+            deleteLink.addEventListener('click', async function(e){
+                e.preventDefault();
+                if(!confirm('Da li ste sigurni da želite obrisati nalog?')) return;
+                const res = await fetch('/api/Api/profile/' + userId, { method: 'DELETE' });
+                if(res.ok){
+                    alert('Nalog obrisan.');
+                    window.location = '/';
+                } else {
+                    alert('Greška pri brisanju naloga.');
+                }
+            });
+
+            loadProfile();
+        })();
+    </script>
 
     </div>
 

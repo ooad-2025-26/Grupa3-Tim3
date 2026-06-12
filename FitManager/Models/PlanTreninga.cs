@@ -1,3 +1,5 @@
+using System;
+
 namespace FitManager.Models
 {
     public class PlanTreninga
@@ -10,7 +12,7 @@ namespace FitManager.Models
         public string SedmicniPlan { get; set; } = string.Empty;
         public DateTime DatumKreiranja { get; set; } = DateTime.UtcNow;
         public string ClanId { get; set; } = string.Empty;
-        public Korisnik Clan { get; set; } = null!;
+        public Korisnik? Clan { get; set; }
 
         public void AzurirajIntenzitet(Intenzitet intenzitet)
         {

@@ -21,11 +21,13 @@ namespace FitManager.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<Korisnik> _signInManager;
+        private readonly UserManager<Korisnik> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<Korisnik> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<Korisnik> signInManager, UserManager<Korisnik> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -66,7 +68,6 @@ namespace FitManager.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [EmailAddress]
             public string Email { get; set; }
 
             /// <summary>
@@ -112,7 +113,29 @@ namespace FitManager.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                // Attempt authentication robustly: try by email, then by username, then fallback
+                Microsoft.AspNetCore.Identity.SignInResult result;
+
+                // 1) Try find by email
+                var userByEmail = await _userManager.FindByEmailAsync(Input.Email);
+                if (userByEmail != null)
+                {
+                    result = await _signInManager.PasswordSignInAsync(userByEmail.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                    if (result.Succeeded) goto SIGNIN_DONE;
+                }
+
+                // 2) Try find by username
+                var userByName = await _userManager.FindByNameAsync(Input.Email);
+                if (userByName != null)
+                {
+                    result = await _signInManager.PasswordSignInAsync(userByName.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                    if (result.Succeeded) goto SIGNIN_DONE;
+                }
+
+                // 3) Fallback: attempt direct sign-in using provided string
+                result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
+            SIGNIN_DONE:;
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

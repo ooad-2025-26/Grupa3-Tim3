@@ -16,9 +16,9 @@
     <section class="calendar-section">
 
         <div class="calendar-header">
-            <button type="button" class="calendar-arrow">←</button>
-            <h2>Juni 2026</h2>
-            <button type="button" class="calendar-arrow">→</button>
+            <button type="button" id="prev-month" class="calendar-arrow">←</button>
+            <h2 id="month-year">---</h2>
+            <button type="button" id="next-month" class="calendar-arrow">→</button>
         </div>
 
         <div class="calendar-grid">
@@ -29,33 +29,268 @@
             <div class="day-name">Pet</div>
             <div class="day-name">Sub</div>
             <div class="day-name">Ned</div>
-
-            <button type="button" class="day">1</button>
-            <button type="button" class="day">2</button>
-            <button type="button" class="day">3</button>
-            <button type="button" class="day active">4</button>
-            <button type="button" class="day">5</button>
-            <button type="button" class="day">6</button>
-            <button type="button" class="day">7</button>
-
-            <button type="button" class="day">8</button>
-            <button type="button" class="day">9</button>
-            <button type="button" class="day">10</button>
-            <button type="button" class="day">11</button>
-            <button type="button" class="day">12</button>
-            <button type="button" class="day">13</button>
-            <button type="button" class="day">14</button>
+            <!-- JS popunjava dane -->
         </div>
 
         <div class="reservation-box">
-            <h3>Odabrani datum</h3>
-            <p>04.06.2026</p>
+            <h3>Odabrani datum: <span id="selected-date">--</span></h3>
+            <div id="trainings-list"></div>
 
-            <button type="button" class="reserve-button">
-                Rezerviši termin
-            </button>
+            <div id="my-reservations">
+                <h4>Moje rezervacije</h4>
+                <div id="my-res-list">Učitavanje...</div>
+            </div>
         </div>
 
     </section>
 
 </div>
+
+<script>
+(function () {
+
+    // ── Elementi ────────────────────────────────────────────────────────────
+    const calendarGrid   = document.querySelector('.calendar-grid');
+    const monthYearEl    = document.getElementById('month-year');
+    const prevBtn        = document.getElementById('prev-month');
+    const nextBtn        = document.getElementById('next-month');
+    const selectedDateEl = document.getElementById('selected-date');
+    const trainingsList  = document.getElementById('trainings-list');
+    const myResList      = document.getElementById('my-res-list');
+
+    const CURRENT_USER_ID = '@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)';
+
+    let viewDate       = new Date();
+    let trainingsCache = [];
+    let reservedSet    = new Set(); // grupniTreningId-evi koje je user rezervisao
+
+    // ── Toast ────────────────────────────────────────────────────────────────
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    document.body.appendChild(toast);
+
+    function showToast(msg, success = true) {
+        toast.textContent = msg;
+        toast.style.background = success ? '#0b6623' : '#b00020';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // ── Kalendar ─────────────────────────────────────────────────────────────
+    function renderCalendar() {
+        calendarGrid.querySelectorAll('.day').forEach(n => n.remove());
+
+        const year  = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+        monthYearEl.textContent = viewDate.toLocaleString('bs', { month: 'long', year: 'numeric' });
+
+        const startDay    = (new Date(year, month, 1).getDay() + 6) % 7; // Pon = 0
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const todayDate   = new Date();
+        const todayStr    = todayDate.toDateString();
+
+        for (let i = 0; i < startDay; i++) {
+            const blank = document.createElement('div');
+            blank.className = 'day';
+            blank.style.visibility = 'hidden';
+            calendarGrid.appendChild(blank);
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'day';
+            btn.textContent = d;
+            btn.setAttribute('data-day', d);
+
+            const dt = new Date(year, month, d);
+            const todayMidnight = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+
+            if (dt < todayMidnight) {
+                btn.classList.add('past');
+                btn.disabled = true;
+            } else if (dt.toDateString() === todayStr) {
+                btn.classList.add('today');
+            }
+
+            btn.addEventListener('click', onDayClick);
+            calendarGrid.appendChild(btn);
+        }
+    }
+
+    // ── Učitaj moje rezervacije (sidebar) ────────────────────────────────────
+    async function loadMyReservations() {
+        if (!CURRENT_USER_ID) {
+            myResList.innerHTML = '<p>Prijavite se za pregled rezervacija.</p>';
+            return;
+        }
+        try {
+            const r = await fetch('/api/Api/reservations/user/' + CURRENT_USER_ID);
+            if (!r.ok) { myResList.innerHTML = '<p>Greška pri učitavanju.</p>'; return; }
+            const list = await r.json();
+            if (!list.length) { myResList.innerHTML = '<p>Nema aktivnih rezervacija.</p>'; return; }
+
+            myResList.innerHTML = '';
+            list.forEach(item => {
+                const div  = document.createElement('div');
+                div.className = 'my-res-item';
+                const time = new Date(item.datumVrijeme).toLocaleString('bs');
+                div.innerHTML = `<strong>${item.naziv}</strong> — ${time}`;
+                myResList.appendChild(div);
+            });
+        } catch (e) {
+            myResList.innerHTML = '<p>Greška pri učitavanju.</p>';
+        }
+    }
+
+    // ── Klik na dan ──────────────────────────────────────────────────────────
+    async function onDayClick() {
+        document.querySelectorAll('.day').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const day   = String(this.getAttribute('data-day')).padStart(2, '0');
+        const month = String(viewDate.getMonth() + 1).padStart(2, '0');
+        const dateStr = `${viewDate.getFullYear()}-${month}-${day}`;
+
+        selectedDateEl.textContent = new Date(dateStr).toLocaleDateString('bs');
+        trainingsList.innerHTML    = '<p>Učitavanje...</p>';
+        trainingsCache = [];
+        reservedSet    = new Set();
+
+        try {
+            // Paralelno dohvati treninge i korisnikove rezervacije
+            const [tRes, rRes] = await Promise.all([
+                fetch('/api/Api/trainings/date/' + dateStr),
+                CURRENT_USER_ID ? fetch('/api/Api/reservations/user/' + CURRENT_USER_ID) : Promise.resolve(null)
+            ]);
+
+            if (!tRes.ok) { trainingsList.innerHTML = '<p>Greška pri učitavanju treninga.</p>'; return; }
+
+            const treninzi = await tRes.json();
+            trainingsCache = treninzi;
+
+            if (rRes && rRes.ok) {
+                const rezervacije = await rRes.json();
+                // grupniTreningId je camelCase jer smo tako vratili iz API-ja
+                rezervacije.forEach(r => reservedSet.add(Number(r.grupniTreningId)));
+            }
+
+            if (!treninzi.length) {
+                trainingsList.innerHTML = '<p>Nema treninga za odabrani datum.</p>';
+                return;
+            }
+
+            trainingsList.innerHTML = '';
+            treninzi.forEach(t => renderTrainingCard(t));
+
+        } catch (e) {
+            trainingsList.innerHTML = '<p>Greška pri učitavanju.</p>';
+        }
+    }
+
+    // ── Renderuj karticu treninga ─────────────────────────────────────────────
+    function renderTrainingCard(t) {
+        const isReserved = reservedSet.has(Number(t.id));
+        const isFull     = (t.slobodnaMjesta || 0) <= 0;
+        const time       = new Date(t.datumVrijeme).toLocaleTimeString('bs', { hour: '2-digit', minute: '2-digit' });
+
+        const card = document.createElement('div');
+        card.className  = 'training-item';
+        card.dataset.id = t.id;
+
+        card.innerHTML = `
+            <div class="training-header">
+                <span class="training-name">${t.naziv}</span>
+                <span class="training-time">${time}</span>
+                ${isReserved ? '<span class="reserved-badge">✓ Rezervisano</span>' : ''}
+            </div>
+            ${t.opis ? `<div class="training-desc">${t.opis}</div>` : ''}
+            <div class="training-footer">
+                <span class="slots${isFull ? ' full' : ''}">
+                    Slobodna mjesta: <strong class="slots-count">${t.slobodnaMjesta}</strong>
+                </span>
+                <button class="reserve-btn btn btn-sm btn-primary"
+                        ${isReserved || isFull ? 'disabled' : ''}>
+                    ${isReserved ? 'Rezervisano' : isFull ? 'Puno' : 'Rezerviši'}
+                </button>
+            </div>
+        `;
+
+        if (!isReserved && !isFull) {
+            card.querySelector('.reserve-btn').addEventListener('click', () => doReserve(t, card));
+        }
+
+        trainingsList.appendChild(card);
+    }
+
+    // ── Glavna akcija rezervacije ─────────────────────────────────────────────
+    async function doReserve(t, card) {
+        if (!CURRENT_USER_ID) {
+            window.location = '/Identity/Account/Login';
+            return;
+        }
+
+        const btn = card.querySelector('.reserve-btn');
+        btn.disabled    = true;
+        btn.textContent = '...';
+
+        try {
+            const response = await fetch('/api/Api/reserve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ClanId: CURRENT_USER_ID, GrupniTreningId: t.id })
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (response.ok) {
+                // Ažuriraj lokalni state
+                reservedSet.add(Number(t.id));
+                const newSlots = data.slobodnaMjesta ?? Math.max(0, (t.slobodnaMjesta || 1) - 1);
+
+                // Ažuriraj cache
+                const cached = trainingsCache.find(x => x.id === t.id);
+                if (cached) cached.slobodnaMjesta = newSlots;
+
+                // Ažuriraj UI kartice
+                const header = card.querySelector('.training-header');
+                if (!header.querySelector('.reserved-badge')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'reserved-badge';
+                    badge.textContent = '✓ Rezervisano';
+                    header.appendChild(badge);
+                }
+
+                const slotsCount = card.querySelector('.slots-count');
+                if (slotsCount) slotsCount.textContent = newSlots;
+
+                btn.textContent = 'Rezervisano';
+                btn.classList.remove('btn-primary');
+
+                showToast('Rezervacija uspješna! ✓', true);
+
+                // Osvježi sidebar
+                await loadMyReservations();
+
+            } else {
+                showToast((data && data.message) || 'Greška pri rezervaciji.', false);
+                btn.disabled    = false;
+                btn.textContent = 'Rezerviši';
+            }
+
+        } catch (err) {
+            showToast('Greška pri rezervaciji.', false);
+            btn.disabled    = false;
+            btn.textContent = 'Rezerviši';
+        }
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    prevBtn.addEventListener('click', () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); });
+    nextBtn.addEventListener('click', () => { viewDate.setMonth(viewDate.getMonth() + 1); renderCalendar(); });
+
+    renderCalendar();
+    loadMyReservations();
+
+})();
+</script>

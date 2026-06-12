@@ -58,8 +58,8 @@
                     <img src="/images/user.png" alt="User Icon" class="input-icon">
 
                     <input asp-for="Input.Email"
-                           type="email"
-                           placeholder="Unesite vaš e-mail" />
+                           type="text"
+                           placeholder="Unesite e-mail ili korisničko ime" />
                 </div>
 
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
@@ -69,9 +69,13 @@
                          alt="Lock Icon"
                          class="input-icon">
 
-                    <input asp-for="Input.Password"
-                           type="password"
-                           placeholder="Unesite vašu šifru" />
+                    <div class="password-wrapper">
+                        <input asp-for="Input.Password"
+                               type="password"
+                               class="pwd-input"
+                               placeholder="Unesite vašu šifru" />
+                        <button type="button" class="pwd-toggle" aria-label="Show password">Prikaži</button>
+                    </div>
                 </div>
 
 
@@ -100,6 +104,17 @@
     </div>
 
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.pwd-toggle').forEach(btn=>{
+            btn.addEventListener('click', function(){
+                const wrapper = btn.parentElement;
+                const input = wrapper.querySelector('.pwd-input');
+                if(!input) return;
+                if(input.type === 'password'){ input.type = 'text'; btn.textContent = 'Sakrij'; }
+                else { input.type = 'password'; btn.textContent = 'Prikaži'; }
+            });
+        });
+    </script>
 
 
 </body>

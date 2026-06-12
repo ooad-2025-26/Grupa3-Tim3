@@ -19,11 +19,19 @@ namespace FitManager.Controllers
             _context = context;
         }
 
-        // GET: PlanTreningas
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.PlanoviTreninga.Include(p => p.Clan);
-            return View(await applicationDbContext.ToListAsync());
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+
+            var planovi = await _context.PlanoviTreninga
+                .Where(p => p.ClanId == userId)
+                .OrderByDescending(p => p.DatumKreiranja)
+                .ToListAsync();
+
+            return View(planovi);
         }
 
         // GET: PlanTreningas/Details/5

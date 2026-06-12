@@ -64,3 +64,59 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@using System.Security.Claims
+
+<div style="margin-top:20px;">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <button id="reserve-btn" class="btn btn-primary">Rezerviši termin</button>
+    }
+    else
+    {
+        <a href="/Identity/Account/Login" class="btn btn-secondary">Prijavite se da rezervišete</a>
+    }
+</div>
+
+<script>
+    (function(){
+        const btn = document.getElementById('reserve-btn');
+        if(!btn) return;
+        const treningId = @Model.Id;
+        const userId = "@(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)";
+
+        // disable if no free places
+        const slobodna = @Model.SlobodnaMjesta;
+        if(slobodna <= 0){
+            btn.disabled = true;
+            btn.textContent = 'Termin je pun';
+            return;
+        }
+
+        btn.addEventListener('click', async function(){
+            if(!confirm('Da li želite rezervisati ovaj termin?')) return;
+
+            const payload = {
+                ClanId: userId,
+                GrupniTreningId: treningId
+            };
+
+            const res = await fetch('/api/Api/reserve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok){
+                alert('Rezervacija uspješna.');
+                window.location.reload();
+                return;
+            }
+
+            const data = await res.json().catch(()=>null);
+            if(data && data.message) alert('Greška: ' + data.message);
+            else if(data && data.errors) alert('Greška: ' + data.errors.join('; '));
+            else alert('Greška pri rezervaciji.');
+        });
+    })();
+</script>

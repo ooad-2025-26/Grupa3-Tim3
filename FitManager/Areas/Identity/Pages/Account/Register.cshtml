@@ -7,7 +7,6 @@
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8" />
     <title>Register</title>
@@ -17,21 +16,18 @@
 
 <body>
     <div class="top-bar"></div>
+
     <div class="main-content">
 
         <!-- LOGO -->
         <div class="logo-container">
-
             <a href="/">
-
                 <img src="/images/logo.jpg"
                      alt="Logo"
                      class="logo" />
-
             </a>
-
         </div>
-        
+
         <!-- TEKST -->
         <div class="text-container">
 
@@ -51,9 +47,6 @@
                        class="custom-input"
                        placeholder="E-mail adresa" />
 
-
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
 
                 <p class="input-label">
@@ -62,8 +55,11 @@
 
                 <input asp-for="Input.Telefon"
                        type="text"
+                       inputmode="numeric"
+                       pattern="\d{9}"
+                       maxlength="9"
                        class="custom-input"
-                       placeholder="Broj telefona" />
+                       placeholder="Broj telefona (9 cifara)" />
 
                 <span asp-validation-for="Input.Telefon" class="text-danger"></span>
 
@@ -71,11 +67,18 @@
                     Unesite vašu šifru
                 </p>
 
-                <input asp-for="Input.Password"
-                       type="password"
-                       class="custom-input"
-                       placeholder="Unesite vašu šifru" />
+                <div class="password-wrapper">
+                    <input asp-for="Input.Password"
+                           type="password"
+                           class="custom-input pwd-input"
+                           placeholder="Unesite vašu šifru" />
 
+                    <button type="button"
+                            class="pwd-toggle"
+                            aria-label="Show password">
+                        Prikaži
+                    </button>
+                </div>
 
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
 
@@ -83,29 +86,58 @@
                     Potvrdite vašu šifru
                 </p>
 
-                <input asp-for="Input.ConfirmPassword"
-                       type="password"
-                       class="custom-input"
-                       placeholder="Potvrdite vašu šifru" />
+                <div class="password-wrapper">
+                    <input asp-for="Input.ConfirmPassword"
+                           type="password"
+                           class="custom-input pwd-input"
+                           placeholder="Potvrdite vašu šifru" />
+
+                    <button type="button"
+                            class="pwd-toggle"
+                            aria-label="Show confirm password">
+                        Prikaži
+                    </button>
+                </div>
 
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
 
                 <button type="submit" class="register-button">
                     Registruj se
                 </button>
-
             </form>
 
         </div>
-
     </div>
+
     <div class="bottom-bar"></div>
 
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.querySelectorAll('.pwd-toggle').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const wrapper = btn.parentElement;
+                const input = wrapper.querySelector('.pwd-input');
+
+                if (!input) return;
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = 'Sakrij';
+                } else {
+                    input.type = 'password';
+                    btn.textContent = 'Prikaži';
+                }
+            });
+        });
+
+        const phone = document.querySelector('input[name="Input.Telefon"]');
+
+        if (phone) {
+            phone.addEventListener('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, 9);
+            });
+        }
+    </script>
 </body>
-
-
-    
-
-
 </html>

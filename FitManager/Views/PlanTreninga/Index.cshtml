@@ -2,61 +2,200 @@
 
 @{
     Layout = null;
+    ViewData["Title"] = "Plan treninga";
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
 }
 
-<link rel="stylesheet" href="~/css/plantreninga.css" />
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Plan treninga</title>
+    <link rel="stylesheet" href="/css/plan.css" />
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
+        .top-section { background: #c8d400; padding: 20px 30px; display: flex; align-items: center; gap: 16px; }
+        .top-section h1 { margin: 0; font-size: 1.8rem; }
+        .back-button { font-size: 1.5rem; text-decoration: none; color: black; }
+        .content { max-width: 700px; margin: 30px auto; padding: 0 16px; }
+        .form-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .form-card h2 { margin-top: 0; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; }
+        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        .btn-kreiraj { width: 100%; padding: 14px; background: #c8d400; border: 2px solid #333; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .btn-kreiraj:hover { background: #b0bb00; }
+        .btn-kreiraj:disabled { opacity: 0.6; cursor: not-allowed; }
+        #plan-message { margin-top: 12px; font-weight: bold; min-height: 20px; }
+        .plan-card { background: white; border-radius: 12px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        .plan-card h3 { margin-top: 0; text-transform: uppercase; }
+        .plan-card p { margin: 4px 0; }
+        .plan-card pre { background: #f0f0f0; padding: 12px; border-radius: 8px; white-space: pre-wrap; font-size: 0.9rem; }
+        .no-plans { color: #888; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
 
-<div class="plan-page">
-
-    <section class="top-section">
-        <a href="@Url.Action("Index", "Home")" class="back-button">←</a>
+    <div class="top-section">
+        <a href="/" class="back-button">←</a>
         <h1>Plan treninga</h1>
-    </section>
+    </div>
 
-    <section class="plan-header">
-        <h2>Moj plan treninga</h2>
+    <div class="content">
 
-        <form class="plan-form">
-            <input type="text" placeholder="Fitness cilj" />
-            <input type="text" placeholder="BMI" />
-            <input type="text" placeholder="BMI kategorija" />
-            <input type="text" placeholder="Intenzitet" />
+        <div class="form-card">
+            <h2>Moj plan treninga</h2>
 
-            <textarea placeholder="Sedmični plan"></textarea>
-
-            <button type="button" class="create-button">
-                Kreiraj plan
-            </button>
-        </form>
-    </section>
-
-    <section class="plan-list">
-
-        @foreach (var item in Model)
-        {
-            <div class="plan-card">
-
-                <h3>@item.FitnessCilj</h3>
-
-                <p><strong>BMI:</strong> @item.Bmi</p>
-                <p><strong>Kategorija:</strong> @item.BmiKategorija</p>
-                <p><strong>Intenzitet:</strong> @item.Intenzitet</p>
-                <p><strong>Datum:</strong> @item.DatumKreiranja</p>
-
-                <div class="weekly-plan">
-                    <strong>Sedmični plan:</strong>
-                    <p>@item.SedmicniPlan</p>
-                </div>
-
-                <div class="plan-actions">
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="delete-link">Obriši</a>
-                </div>
-
+            <div class="form-group">
+                <label for="fitness-cilj">Fitness cilj</label>
+                <select id="fitness-cilj">
+                    <option value="0">Mršavljenje</option>
+                    <option value="1">Jačanje</option>
+                    <option value="2">Izdržljivost</option>
+                </select>
             </div>
-        }
 
-    </section>
+            <div class="form-group">
+                <label for="bmi">BMI</label>
+                <input type="number" step="0.01" id="bmi" placeholder="npr. 22.5" />
+            </div>
 
-</div>
+            <div class="form-group">
+                <label for="bmi-kategorija">BMI Kategorija</label>
+                <select id="bmi-kategorija">
+                    <option value="0">Pothranjenost</option>
+                    <option value="1">Normalna težina</option>
+                    <option value="2">Prekomjerna težina</option>
+                    <option value="3">Gojaznost</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="intenzitet">Intenzitet</label>
+                <select id="intenzitet">
+                    <option value="0">Početnik</option>
+                    <option value="1">Srednji</option>
+                    <option value="2">Napredni</option>
+                </select>
+            </div>
+
+            <button type="button" id="create-plan-button" class="btn-kreiraj">Kreiraj plan</button>
+            <div id="plan-message"></div>
+        </div>
+
+        <div id="plans-container">
+            @if (!Model.Any())
+            {
+                <p class="no-plans">Nemate kreiranih planova treninga.</p>
+            }
+            else
+            {
+                @foreach (var plan in Model.OrderByDescending(p => p.DatumKreiranja))
+                {
+                    <div class="plan-card">
+                        <h3>@plan.FitnessCilj</h3>
+                        <p><strong>BMI:</strong> @plan.Bmi</p>
+                        <p><strong>Kategorija:</strong> @plan.BmiKategorija</p>
+                        <p><strong>Intenzitet:</strong> @plan.Intenzitet</p>
+                        <p><strong>Datum:</strong> @plan.DatumKreiranja.ToString("g")</p>
+                        <pre>@plan.SedmicniPlan</pre>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const createButton = document.getElementById('create-plan-button');
+        const message = document.getElementById('plan-message');
+        const plansContainer = document.getElementById('plans-container');
+        const userId = '@userId';
+
+        createButton.addEventListener('click', async function () {
+            message.style.color = '';
+            message.textContent = '';
+
+            const fitnessCilj = document.getElementById('fitness-cilj').value;
+            const bmi = document.getElementById('bmi').value;
+            const bmiKategorija = document.getElementById('bmi-kategorija').value;
+            const intenzitet = document.getElementById('intenzitet').value;
+
+            if (!bmi || parseFloat(bmi) <= 0) {
+                message.style.color = 'red';
+                message.textContent = 'Unesi ispravan BMI.';
+                return;
+            }
+
+            if (!userId) {
+                message.style.color = 'red';
+                message.textContent = 'Morate biti prijavljeni.';
+                return;
+            }
+
+            const payload = {
+                fitnessCilj: parseInt(fitnessCilj),
+                bmi: parseFloat(bmi),
+                bmiKategorija: parseInt(bmiKategorija),
+                intenzitet: parseInt(intenzitet),
+                clanId: userId
+            };
+
+            try {
+                createButton.disabled = true;
+
+                const response = await fetch('/api/Api/training-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    message.style.color = 'red';
+                    message.textContent = data.message || 'Greška pri kreiranju plana.';
+                    return;
+                }
+
+                message.style.color = 'green';
+                message.textContent = 'Plan uspješno kreiran!';
+
+                // Ukloni "nema planova" poruku ako postoji
+                const noPlans = plansContainer.querySelector('.no-plans');
+                if (noPlans) noPlans.remove();
+
+                // Dodaj novi plan na vrh liste
+                const fitnessCiljNaziv = ['MRSAVLJENJE', 'JACANJE', 'IZDRZLJIVOST'][data.fitnessCilj !== undefined ? parseInt(fitnessCilj) : 0];
+                const datum = new Date(data.datumKreiranja).toLocaleString();
+
+                const card = document.createElement('div');
+                card.className = 'plan-card';
+                card.innerHTML = `
+                    <h3>${data.fitnessCilj || fitnessCiljNaziv}</h3>
+                    <p><strong>BMI:</strong> ${data.bmi}</p>
+                    <p><strong>Kategorija:</strong> ${data.bmiKategorija}</p>
+                    <p><strong>Intenzitet:</strong> ${data.intenzitet}</p>
+                    <p><strong>Datum:</strong> ${datum}</p>
+                    <pre>${data.sedmicniPlan || ''}</pre>
+                `;
+
+                plansContainer.insertBefore(card, plansContainer.firstChild);
+
+                // Resetuj formu
+                document.getElementById('bmi').value = '';
+
+            } catch (err) {
+                console.error(err);
+                message.style.color = 'red';
+                message.textContent = 'Greška sa serverom.';
+            } finally {
+                createButton.disabled = false;
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>

@@ -23,18 +23,18 @@
 
     <section class="stats-grid">
         <div class="stat-card">
-            <span>Ukupni prihod</span>
-            <h3>2.450 KM</h3>
+            <span>Ukupni korisnici</span>
+            <h3>@(ViewBag.Users ?? 0)</h3>
         </div>
 
         <div class="stat-card">
-            <span>Novi članovi</span>
-            <h3>34</h3>
+            <span>Broj treninga</span>
+            <h3>@(ViewBag.Trainings ?? 0)</h3>
         </div>
 
         <div class="stat-card">
             <span>Broj rezervacija</span>
-            <h3>128</h3>
+            <h3>@(ViewBag.Reservations ?? 0)</h3>
         </div>
     </section>
 
