@@ -1,0 +1,27 @@
+
+Task - implementacija
+Completion requirements
+
+Jedanaesti projektni zadatak
+
+Implementacija sistema
+
+Potrebno je izvršiti implementaciju sistema u obliku ASP.NET MVC web-aplikacije. Cjelokupni kod aplikacije se treba nalaziti na Github repozitoriju tima.
+
+U README.md datoteku je potrebno dodati sve potrebne podatke za pristup aplikaciji (pristupni podaci za registrovane korisnike unutar aplikacije, link na kojem je postavljena aplikacija, itd.)
+
+Za studente koji ne urade deployment aplikacije, konekcijski string poslati na mail odgovornom asistentu ili demonstratoru prije roka za predaju.
+
+Aplikacija treba sadržavati sve elemente iz dokumenta za bodovanje projektnih zadataka.
+
+Potrebno je kreirati jedan .pdf dokument u kojem su spojeni sljedeći dokumenti: specifikacija, dijagram slučajeva, MVC dijagram klasa i ERD. Također je potrebno i dodati dokument u kojem su navedene sve izmjene koje su napravljene u implementaciji u odnosu na prvobitnu specifikaciju.
+
+NAPOMENE:
+
+    ako se pri implementaciji vanjskog uređaja koristi API za prikazivanje mapa ili podataka, potrebno je dodati još neku razmjenu podataka izuzev prikazivanja podataka (npr. pretraga lokacija u mapi)
+    nije potrebno implementirati dodjeljivanje uloga korisnicima, ali registracija mora biti funkcionalna za barem jednu korisničku ulogu
+    korisnički interfejs ne treba biti responzivan, tj. dovoljno je da je se ispravno prikazuje na računaru na kojem će biti prezentovan projekat.
+
+Prezentacija projekata će se održati u sedmici nadoknade u terminima dogovorenim sa studentima.
+
+Rok za završetak projekta: 12.6.2025. god. u 23:59 h
