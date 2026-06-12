@@ -97,17 +97,69 @@ body {
 .day.past { opacity: 0.4; cursor: not-allowed; }
 .day.today { outline: 3px solid #f0e86b; }
 
-.training-item { padding: 8px; border: 1px solid #ddd; margin: 6px 0; border-radius:4px; }
+.training-item { padding: 16px; border: 1px solid #ddd; margin: 10px 0; border-radius: 12px; background: #fff; transition: box-shadow .2s; }
+.training-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
 .training-item.selected { background: #eef9d6; border-color: #c5c408; }
-.reserve-btn { margin-top:8px; }
 
-.reserved-badge { background:#e6f4ea; padding:2px 6px; border-radius:4px; font-size:12px; margin-left:8px; }
+.btn-reserve {
+    margin-top: 8px;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 25px;
+    background-color: #C5C408;
+    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+}
+.btn-reserve:hover:not(:disabled) {
+    background-color: #dede12;
+    transform: scale(1.06);
+    box-shadow: 0 0 20px rgba(197, 196, 8, 0.4);
+}
+.btn-reserve:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
-.toast { position: fixed; right: 20px; bottom: 20px; background: #222; color: #fff; padding: 12px 16px; border-radius: 6px; display: none; box-shadow:0 2px 8px rgba(0,0,0,0.3);} 
+.reserved-badge { background:#e6f4ea; padding:2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-left:8px; color: #1b5e20; }
+
+.toast { position: fixed; right: 20px; bottom: 20px; background: #222; color: #fff; padding: 14px 20px; border-radius: 10px; display: none; box-shadow:0 4px 16px rgba(0,0,0,0.3); font-weight: 500; } 
 .toast.show { display: block; }
 
-#my-reservations { margin-top: 12px; }
-.my-res-item { padding:6px 8px; border-bottom:1px solid #eee; }
+#my-reservations { margin-top: 20px; }
+.my-res-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+    gap: 10px;
+}
+.my-res-info { flex: 1; font-size: 13px; line-height: 1.4; }
+
+.cancel-btn {
+    padding: 6px 16px;
+    border: 2px solid #c62828;
+    border-radius: 20px;
+    background: transparent;
+    color: #c62828;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+    white-space: nowrap;
+}
+.cancel-btn:hover:not(:disabled) {
+    background: #c62828;
+    color: #fff;
+}
+.cancel-btn:disabled {
+    border-color: #aaa;
+    color: #aaa;
+    cursor: not-allowed;
+}
 
 .reservation-box {
     margin-top: 30px;
@@ -142,5 +194,3 @@ body {
 .reserve-button[disabled] { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
 
 .day.active { background:#d3cf2a; }
-.training-item { padding:10px; border:1px solid #eee; margin:8px 0; cursor:pointer; border-radius:6px; }
-.training-item.selected { background:#f0f8d1; border-color:#c0bf2a; }

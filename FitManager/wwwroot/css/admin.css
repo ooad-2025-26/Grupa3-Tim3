@@ -146,10 +146,219 @@ body {
     color: #721c24;
 }
 
+/* CRUD TABELA */
+
+.admin-table-wrap {
+    padding: 0 30px 30px;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+.admin-table th {
+    background: #272F38;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 16px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.actions-cell a {
+    color: #272F38;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    transition: .2s;
+    display: inline-block;
+}
+
+.actions-cell a:hover {
+    background: #C5C408;
+    color: #000;
+}
+
+.actions-cell .sep {
+    color: #ddd;
+    margin: 0 2px;
+}
+
+/* CRUD FORME */
+
+.admin-form-wrap {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.admin-form-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+
+.admin-form-card h2 {
+    margin-top: 0;
+    font-size: 22px;
+}
+
+.admin-field {
+    margin-bottom: 18px;
+}
+
+.admin-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color .2s;
+    box-sizing: border-box;
+}
+
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-field textarea:focus {
+    outline: none;
+    border-color: #C5C408;
+}
+
+.admin-field textarea {
+    resize: vertical;
+}
+
+.admin-field .text-danger {
+    color: #c62828;
+    font-size: 13px;
+}
+
+/* CRUD DUGMAD */
+
+.admin-btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.admin-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    border: 2px solid transparent;
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-btn-primary {
+    background: #C5C408;
+    color: #000;
+    border-color: #C5C408;
+}
+
+.admin-btn-primary:hover {
+    background: #dede12;
+    transform: scale(1.02);
+}
+
+.admin-btn-secondary {
+    background: transparent;
+    color: #666;
+    border-color: #ddd;
+}
+
+.admin-btn-secondary:hover {
+    border-color: #999;
+    color: #000;
+}
+
+.admin-btn-danger {
+    background: #c62828;
+    color: #fff;
+    border-color: #c62828;
+}
+
+.admin-btn-danger:hover {
+    background: #e53935;
+    transform: scale(1.02);
+}
+
+/* DETAILS / DELETE DL */
+
+.admin-dl {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 12px 20px;
+    padding: 10px 0;
+}
+
+.admin-dl dt {
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+.admin-dl dd {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* TOOLBAR */
+
+.admin-toolbar {
+    padding: 20px 30px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 900px) {
     .admin-content {
+        grid-template-columns: 1fr;
+    }
+    .admin-dl {
         grid-template-columns: 1fr;
     }
 }

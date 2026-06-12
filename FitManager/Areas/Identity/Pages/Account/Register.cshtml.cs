@@ -90,6 +90,7 @@ namespace FitManager.Areas.Identity.Pages.Account
                 var user = CreateUser();
 
                 user.Telefon = Input.Telefon;
+                user.Uloga = UlogaKorisnika.CLAN;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -98,6 +99,8 @@ namespace FitManager.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "CLAN");
+
                     _logger.LogInformation("User created a new account with password.");
 
                     await _signInManager.SignInAsync(user, isPersistent: false);

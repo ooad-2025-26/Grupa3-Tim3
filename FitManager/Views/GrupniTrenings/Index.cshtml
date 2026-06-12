@@ -1,77 +1,58 @@
 ﻿@model IEnumerable<FitManager.Models.GrupniTrening>
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = null;
+    ViewData["Title"] = "Grupni treninzi";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/admin.css" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Naziv)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Opis)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaksKapacitet)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SlobodnaMjesta)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumVrijeme)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trajanje)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipTreninga)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trener)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="admin-page">
+
+    <section class="top-section">
+        <a href="/Admin/Index" class="back-button">←</a>
+        <h1>Grupni treninzi</h1>
+    </section>
+
+    <div class="admin-toolbar">
+        <a href="/GrupniTrenings/Create" class="admin-btn admin-btn-primary">+ Novi grupni trening</a>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Naziv)</th>
+                    <th>@Html.DisplayNameFor(model => model.Opis)</th>
+                    <th>@Html.DisplayNameFor(model => model.MaksKapacitet)</th>
+                    <th>@Html.DisplayNameFor(model => model.SlobodnaMjesta)</th>
+                    <th>@Html.DisplayNameFor(model => model.DatumVrijeme)</th>
+                    <th>@Html.DisplayNameFor(model => model.Trajanje)</th>
+                    <th>@Html.DisplayNameFor(model => model.TipTreninga)</th>
+                    <th>@Html.DisplayNameFor(model => model.Trener)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Opis)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaksKapacitet)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SlobodnaMjesta)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumVrijeme)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trajanje)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipTreninga)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trener.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Naziv)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Opis)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MaksKapacitet)</td>
+                    <td>@Html.DisplayFor(modelItem => item.SlobodnaMjesta)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DatumVrijeme)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Trajanje)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TipTreninga)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Trener.Email)</td>
+                    <td class="actions-cell">
+                        <a href="/GrupniTrenings/Edit/@item.Id">Edit</a><span class="sep">|</span>
+                        <a href="/GrupniTrenings/Details/@item.Id">Details</a><span class="sep">|</span>
+                        <a href="/GrupniTrenings/Delete/@item.Id">Delete</a>
+                    </td>
+                </tr>
 }
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+
+</div>

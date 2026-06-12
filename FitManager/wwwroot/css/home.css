@@ -340,158 +340,207 @@ body {
     gap: 370px;
 }
 
-/* THIRD SECTION */
+/* THIRD SECTION - O NAMA */
 .third-section {
     width: 100%;
     min-height: 900px;
     background-color: #272F38;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* INFO FRAME */
-.info-frame {
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 80px;
-}
-
-/* LEFT FRAME */
-.left-frame {
-    width: 38%;
-    min-height: 620px;
-    background-color: #1E1E1E;
-    border-radius: 30px;
-    padding: 50px 45px;
+    padding: 80px 40px 60px;
     display: flex;
     flex-direction: column;
-}
-
-/* TITLE */
-.team-title {
-    color: white;
-    font-size: 38px;
-    font-weight: 700;
-    line-height: 1.15;
-}
-
-/* DESCRIPTION */
-.team-description {
-    margin-top: 50px;
-    color: white;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 1.8;
-}
-/* BUTTON */
-.plan-button {
-    margin-top: auto;
-    width: 240px;
-    height: 65px;
-    background-color: #C5C408;
-    color: black;
-    text-decoration: none;
-    border-radius: 15px;
-    display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: 600;
-    transition: 0.3s;
 }
 
-    /* HOVER */
-    .plan-button:hover {
-        
-        background-color: #dede12;
-        transform: scale(1.08);
-        box-shadow: 0 0 25px rgba(197, 196, 8, 0.5);
-    }
-
-.trainer-section {
-    display: flex;
-    flex-direction: column;
+.about-header {
+    text-align: center;
+    margin-bottom: 60px;
+    max-width: 700px;
 }
 
-.trainer-slider {
-    display: flex;
-    gap: 35px;
-
-    transition: transform 0.5s ease;
+.about-title {
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0;
 }
-/* WRAPPER */
-.trainer-wrapper {
-    width: 650px;
+
+.about-title-white {
+    color: #fff;
+    display: block;
+}
+
+.about-title-yellow {
+    color: #C5C408;
+    display: block;
+}
+
+.about-subtitle {
+    color: rgba(255,255,255,0.7);
+    font-size: 18px;
+    line-height: 1.7;
+    margin-top: 16px;
+}
+
+/* TRENERI GRID */
+.trainers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.trainer-card-modern {
+    background: #1E1E1E;
+    border-radius: 24px;
     overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
 }
 
-.trainer-card {
-    width: 280px;
-    height: 500px;
-    background-color: #1E1E1E;
-    border-radius: 25px;
-    padding-top: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.trainer-card-modern:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
 }
 
-.trainer-image {
-    width: 210px;
-    height: 210px;
+.trainer-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 260px;
+}
+
+.trainer-img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 18px;
+    transition: transform .4s;
 }
 
-.trainer-name {
-    margin-top: 30px;
-    color: white;
-    font-size: 34px;
-    font-weight: 500;
-    text-align: center;
-}
-.trainer-line {
-    width: 170px;
-    height: 1px;
-    background-color: white;
-    margin-top: 18px;
-}
-.trainer-role {
-    margin-top: 30px;
-    color: white;
-    font-size: 24px;
-    font-weight: 300;
-    text-align: center;
+.trainer-card-modern:hover .trainer-img {
+    transform: scale(1.08);
 }
 
-.slider-buttons {
+.trainer-socials {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    gap: 20px;
-    margin-top: 40px;
-    align-self: flex-end;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity .3s;
 }
 
-.slider-arrow {
-    width: 70px;
-    height: 70px;
-    border: 3px solid #1E1E1E;
+.trainer-card-modern:hover .trainer-socials {
+    opacity: 1;
+}
+
+.social-circle {
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    color: white;
-    font-size: 38px;
+    background: #C5C408;
+    color: #000;
+    font-size: 12px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: 0.3s;
+    text-decoration: none;
+    transition: .2s;
 }
 
-    .slider-arrow:hover {
-        background-color: #C5C408;
-        color: black;
-    }
+.social-circle:hover {
+    transform: scale(1.15);
+}
+
+.trainer-info {
+    padding: 20px 18px 24px;
+    text-align: center;
+}
+
+.trainer-info h3 {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.trainer-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #C5C408;
+    color: #000;
+}
+
+.trainer-badge-green {
+    background: #2e7d32;
+    color: #fff;
+}
+
+.trainer-badge-blue {
+    background: #1565c0;
+    color: #fff;
+}
+
+.trainer-badge-purple {
+    background: #6a1b9a;
+    color: #fff;
+}
+
+.trainer-bio {
+    color: rgba(255,255,255,0.65);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 12px 0 16px;
+}
+
+.trainer-stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.trainer-stat-item {
+    text-align: center;
+}
+
+.trainer-stat-item strong {
+    display: block;
+    color: #C5C408;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.trainer-stat-item span {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+}
+
+.about-cta {
+    margin-top: 60px;
+}
+
+.about-cta-btn {
+    display: inline-block;
+    padding: 16px 48px;
+    background: #C5C408;
+    color: #000;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    transition: .3s;
+}
+
+.about-cta-btn:hover {
+    background: #dede12;
+    transform: scale(1.06);
+    box-shadow: 0 0 30px rgba(197,196,8,0.4);
+}
 
 
 /* FOURTH SECTION */
@@ -754,16 +803,16 @@ body {
 
     /* TRAINERS */
 
-    .info-frame {
-        flex-direction: column;
+    .trainers-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .left-frame {
-        width: 100%;
+    .about-title {
+        font-size: 38px;
     }
 
-    .trainer-wrapper {
-        width: 100%;
+    .third-section {
+        padding: 50px 20px 40px;
     }
 
     /* PLANS */

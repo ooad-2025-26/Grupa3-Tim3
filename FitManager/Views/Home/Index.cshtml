@@ -86,25 +86,44 @@
                 <div class="dropdown-menu">
 
                     <a href="/Korisnik/Profil" class="dropdown-item">
-                            Moj profil
+                        Moj profil
                     </a>
 
-                    <a href="/Clanarina/MojaClanarina" class="dropdown-item">
-                        Moja članarina
-                    </a>
+                    @if (User.IsInRole("CLAN"))
+                    {
+                        <a href="/Clanarina/MojaClanarina" class="dropdown-item">
+                            Moja članarina
+                        </a>
+                        <a href="/Rezervacija/Index" class="dropdown-item">
+                            Rezervacije
+                        </a>
+                        <a href="/PlanTreninga/Index" class="dropdown-item">
+                            Plan treninga
+                        </a>
+                    }
 
-                    <a href="/Rezervacija/Index" class="dropdown-item">
-                        Rezervacije
-                    </a>
+                    @if (User.IsInRole("TRENER"))
+                    {
+                        <a href="/Rezervacija/Index" class="dropdown-item">
+                            Rezervacije
+                        </a>
+                        <a href="/PlanTreninga/Index" class="dropdown-item">
+                            Plan treninga
+                        </a>
+                    }
 
-                    <a href="/PlanTreninga/Index" class="dropdown-item">
-                        Plan treninga
-                    </a>
-
-                    <a href="/Admin/Index" class="dropdown-item">
-                        Admin
-                    </a>
-
+                    @if (User.IsInRole("ADMIN"))
+                    {
+                        <a href="/Rezervacija/Index" class="dropdown-item">
+                            Rezervacije
+                        </a>
+                        <a href="/PlanTreninga/Index" class="dropdown-item">
+                            Plan treninga
+                        </a>
+                        <a href="/Admin/Index" class="dropdown-item">
+                            Admin
+                        </a>
+                    }
 
                 </div>
             </div>
@@ -140,12 +159,20 @@
             <div class="hero-buttons">
 
                 <!-- JOIN BUTTON -->
-                <a href="/Identity/Account/Register"
-                   class="join-button">
-
-                    Učlani se
-
-                </a>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a href="/Identity/Account/Register"
+                       class="join-button">
+                        Učlani se
+                    </a>
+                }
+                else if (User.IsInRole("CLAN"))
+                {
+                    <a href="/Clanarina/MojaClanarina"
+                       class="join-button">
+                        Učlani se
+                    </a>
+                }
 
                 <!-- MORE BUTTON -->
                 <a href="#about-us"
@@ -210,138 +237,152 @@
 
     </section>
 
-    <!-- THIRD SECTION -->
+    <!-- THIRD SECTION - O NAMA -->
     <section id="third" class="third-section">
 
-        <div class="info-frame">
-
-            <!-- LEFT FRAME -->
-            <div class="left-frame">
-                <!-- TITLE -->
-                <h1 class="team-title">
-
-                    PRIDRUŽI SE
-                    <br>
-                    NAŠEM TIMU
-
-                </h1>
-
-                <!-- DESCRIPTION -->
-                <p class="team-description">
-
-                    Upoznaj naš tim stručnjaka koji će ti
-                    kreirati plan treninga prilagođen
-                    tvojim ciljevima.
-
-                </p>
-
-                <!-- BUTTON -->
-                <a href="#plans-section"
-                   class="plan-button">
-
-                    Izaberi svoj plan
-
-                </a>
-
-
-            </div>
-
-            <!-- RIGHT SIDE -->
-            <div class="trainer-section">
-                <!-- CARDS -->
-                <div class="trainer-wrapper">
-                <div class="trainer-slider">
-
-                    <!-- CARD1 -->
-                    <div class="trainer-card">
-
-                        <img src="/images/trainer1.jpg"
-                             alt="Trainer"
-                             class="trainer-image"/>
-
-                        <h2 class="trainer-name">
-                            Miralem Pjanić
-                        </h2>
-                        
-                        <div class="trainer-line"></div>
-
-                        <p class="trainer-role">
-                            Glavni trener
-                        </p>
-                    </div>
-
-                    <!-- CARD 2 -->
-                    <div class="trainer-card">
-
-    <img src="/images/trainer2.jpg"
-         alt="Trainer"
-         class="trainer-image" />
-
-    <h2 class="trainer-name">
-        Edin Hamidovic
-    </h2>
-
-    <div class="trainer-line"></div>
-
-    <p class="trainer-role">
-        Kondicioni trener
-    </p>
-
-</div>
-<!-- CARD 3 -->
-<div class="trainer-card">
-
-    <img src="/images/trainer1.jpg"
-         alt="Trainer"
-         class="trainer-image" />
-
-    <h2 class="trainer-name">
-        Ahmed Delic
-    </h2>
-
-    <div class="trainer-line"></div>
-
-    <p class="trainer-role">
-        Trener
-    </p>
-
-</div>
-<!-- CARD 4 -->
-<div class="trainer-card">
-
-    <img src="/images/trainer2.jpg"
-         alt="Trainer"
-         class="trainer-image" />
-
-    <h2 class="trainer-name">
-        Halid Masovic
-    </h2>
-
-    <div class="trainer-line"></div>
-
-    <p class="trainer-role">
-        Trener
-    </p>
-
-</div>
-                    
-                </div>
-                </div>
-                <!-- ARROWS -->
-                <div class="slider-buttons">
-                    <div class="slider-arrow">
-                        ←
-                    </div>
-                    <div class="slider-arrow">
-                        →
-                    </div>
-                </div>
-            </div>
-
-            
+        <div class="about-header">
+            <h1 class="about-title">
+                <span class="about-title-white">UPOZNAJ</span>
+                <span class="about-title-yellow">NAŠ TIM</span>
+            </h1>
+            <p class="about-subtitle">
+                Stručni tim posvećen tvojim fitness ciljevima — svaki član donosi
+                jedinstvenu ekspertizu i strast prema zdravom načinu života.
+            </p>
         </div>
 
-      
+        <div class="trainers-grid">
+
+            <!-- TRENER 1 -->
+            <div class="trainer-card-modern">
+                <div class="trainer-img-wrapper">
+                    <img src="/images/trainer1.jpg" alt="Miralem Pjanić" class="trainer-img" />
+                    <div class="trainer-socials">
+                        <a href="#" class="social-circle">in</a>
+                        <a href="#" class="social-circle">fb</a>
+                        <a href="#" class="social-circle">ig</a>
+                    </div>
+                </div>
+                <div class="trainer-info">
+                    <h3>Miralem Pjanić</h3>
+                    <span class="trainer-badge">Glavni trener</span>
+                    <p class="trainer-bio">Specijaliziran za funkcionalni trening i rehabilitaciju. Preko 10 godina iskustva.</p>
+                    <div class="trainer-stats-row">
+                        <div class="trainer-stat-item">
+                            <strong>15+</strong>
+                            <span>Godina</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>500+</strong>
+                            <span>Klijenata</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>4.9</strong>
+                            <span>Ocjena</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRENER 2 -->
+            <div class="trainer-card-modern">
+                <div class="trainer-img-wrapper">
+                    <img src="/images/trainer2.jpg" alt="Edin Hamidovic" class="trainer-img" />
+                    <div class="trainer-socials">
+                        <a href="#" class="social-circle">in</a>
+                        <a href="#" class="social-circle">fb</a>
+                        <a href="#" class="social-circle">ig</a>
+                    </div>
+                </div>
+                <div class="trainer-info">
+                    <h3>Edin Hamidović</h3>
+                    <span class="trainer-badge trainer-badge-green">Kondicioni trener</span>
+                    <p class="trainer-bio">Stručnjak za kondicijsku pripremu, kardio treninge i transformaciju tijela.</p>
+                    <div class="trainer-stats-row">
+                        <div class="trainer-stat-item">
+                            <strong>12+</strong>
+                            <span>Godina</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>350+</strong>
+                            <span>Klijenata</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>4.8</strong>
+                            <span>Ocjena</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRENER 3 -->
+            <div class="trainer-card-modern">
+                <div class="trainer-img-wrapper">
+                    <img src="/images/trainer1.jpg" alt="Ahmed Delic" class="trainer-img" />
+                    <div class="trainer-socials">
+                        <a href="#" class="social-circle">in</a>
+                        <a href="#" class="social-circle">fb</a>
+                        <a href="#" class="social-circle">ig</a>
+                    </div>
+                </div>
+                <div class="trainer-info">
+                    <h3>Ahmed Delić</h3>
+                    <span class="trainer-badge trainer-badge-blue">Personalni trener</span>
+                    <p class="trainer-bio">Fokus na trening snage, bodybuilding i savjetovanje o ishrani.</p>
+                    <div class="trainer-stats-row">
+                        <div class="trainer-stat-item">
+                            <strong>8+</strong>
+                            <span>Godina</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>200+</strong>
+                            <span>Klijenata</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>4.7</strong>
+                            <span>Ocjena</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRENER 4 -->
+            <div class="trainer-card-modern">
+                <div class="trainer-img-wrapper">
+                    <img src="/images/trainer2.jpg" alt="Halid Masovic" class="trainer-img" />
+                    <div class="trainer-socials">
+                        <a href="#" class="social-circle">in</a>
+                        <a href="#" class="social-circle">fb</a>
+                        <a href="#" class="social-circle">ig</a>
+                    </div>
+                </div>
+                <div class="trainer-info">
+                    <h3>Halid Masović</h3>
+                    <span class="trainer-badge trainer-badge-purple">Yoga & Pilates</span>
+                    <p class="trainer-bio">Certificirani instruktor joge i pilatesa, specijaliziran za fleksibilnost i opuštanje.</p>
+                    <div class="trainer-stats-row">
+                        <div class="trainer-stat-item">
+                            <strong>6+</strong>
+                            <span>Godina</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>150+</strong>
+                            <span>Klijenata</span>
+                        </div>
+                        <div class="trainer-stat-item">
+                            <strong>4.9</strong>
+                            <span>Ocjena</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="about-cta">
+            <a href="#plans-section" class="about-cta-btn">Započni svoj put</a>
+        </div>
+
     </section>
 
     <!-- FOURTH SECTION -->
@@ -510,12 +551,20 @@
         <div class="plans-button-container">
 
             
-            <a href="/Identity/Account/Register"
-               class="plans-join-button">
-
-                Učlani se
-
-            </a>
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a href="/Identity/Account/Register"
+                   class="plans-join-button">
+                    Učlani se
+                </a>
+            }
+            else if (User.IsInRole("CLAN"))
+            {
+                <a href="/Clanarina/MojaClanarina"
+                   class="plans-join-button">
+                    Učlani se
+                </a>
+            }
 
         </div>
 

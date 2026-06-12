@@ -1,4 +1,7 @@
-﻿@{
+﻿@using FitManager.Models
+@model Clanarina?
+
+@{
     Layout = null;
 }
 
@@ -6,48 +9,80 @@
 
 <div class="moja-clanarina-page">
 
-    <section class="top-section">
-        <a href="@Url.Action("Index", "Home")" class="back-button">
-            ←
-        </a>
+    @if (Model != null)
+    {
+        <!-- AKTIVNA CLANARINA -->
+        <section class="top-section">
+            <a href="@Url.Action("Index", "Home")" class="back-button">←</a>
+            <h1>Članska kartica</h1>
+        </section>
 
-        <h1>Članska kartica</h1>
-    </section>
+        <section class="qr-section">
+            <div class="qr-card">
+                <img id="qr-image" src="/images/QR.png" alt="QR kod" class="qr-image" />
+            </div>
+        </section>
 
-    <section class="qr-section">
-        <div class="qr-card">
-            <img id="qr-image" src="/images/QR.png"
-                 alt="QR kod"
-                 class="qr-image" />
-        </div>
-    </section>
+        <section class="paket-section">
+            <h2>@Model.TipClanarine?.Naziv</h2>
+        </section>
 
-    <section class="paket-section">
-        <h2>PAKET</h2>
-    </section>
+        <section class="clanarina-info">
+            <p>Članarina: <span>@Model.TipClanarine?.Naziv</span></p>
+            <p>Datum: <span>@Model.DatumPocetka.ToLocalTime().ToString("dd.MM.yyyy")</span></p>
+            <p>Istek: <span>@Model.DatumIsteka.ToLocalTime().ToString("dd.MM.yyyy")</span></p>
+            <p>Cijena: <span>@Model.Cijena KM</span></p>
+            <p>Status: <span>@Model.Status</span></p>
+        </section>
 
-    <section class="clanarina-info">
-        <p>Članarina: <span id="tip">Tip članarine</span></p>
-        <p>Datum: <span id="pocetak">Početak trajanja</span></p>
-        <p>Istek: <span id="istek">Datum isteka</span></p>
-    </section>
+        <script>
+            (function(){
+                const userId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)";
+                if(!userId) return;
+                async function load(){
+                    const res = await fetch('/api/Api/membership/' + userId);
+                    if(!res.ok) return;
+                    const data = await res.json();
+                    if(data.qrbase64){
+                        document.getElementById('qr-image').src = 'data:image/png;base64,' + data.qrbase64;
+                    }
+                }
+                load();
+            })();
+        </script>
+    }
+    else
+    {
+        <!-- NEMA CLANARINE - PONUDA ZA KUPOVINU -->
+        <section class="top-section">
+            <a href="@Url.Action("Index", "Home")" class="back-button">←</a>
+            <h1>Odaberi članarinu</h1>
+        </section>
 
-    <script>
-        (function(){
-            const userId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)";
-            if(!userId) return;
-            async function load(){
-                const res = await fetch('/api/Api/membership/' + userId);
-                if(!res.ok) return;
-                const data = await res.json();
-                document.getElementById('tip').textContent = data.tip || '';
-                document.getElementById('pocetak').textContent = new Date(data.datumpocetka).toLocaleDateString();
-                document.getElementById('istek').textContent = new Date(data.datumisteka).toLocaleDateString();
-                if(data.qrbase64){
-                    document.getElementById('qr-image').src = 'data:image/png;base64,' + data.qrbase64;
+        <section class="plans-container">
+            @if (ViewBag.Tipovi is List<TipClanarine> tipovi && tipovi.Any())
+            {
+                @foreach (var tip in tipovi)
+                {
+                    <div class="plan-card">
+                        <h2 class="plan-title">@tip.Naziv</h2>
+                        <h1 class="plan-price">@tip.Cijena KM</h1>
+                        <div class="plan-line"></div>
+                        <div class="plan-features">
+                            <p class="plan-feature">• Trajanje: @tip.TrajanjeDana dana</p>
+                        </div>
+                        <form asp-action="Kupi" asp-controller="Clanarina" method="post" style="margin-top:1rem;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="tipClanarineId" value="@tip.Id" />
+                            <button type="submit" class="kupi-button">Kupi</button>
+                        </form>
+                    </div>
                 }
             }
-            load();
-        })();
-    </script>
+            else
+            {
+                <p>Trenutno nema dostupnih paketa članarine.</p>
+            }
+        </section>
+    }
 </div>

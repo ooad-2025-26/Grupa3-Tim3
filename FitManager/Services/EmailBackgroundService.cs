@@ -34,6 +34,42 @@ namespace FitManager.Services
                     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     var emailSvc = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
+                    var now = DateTime.UtcNow;
+                    var uskoroIsticu = await db.Clanarine
+                        .Include(c => c.Clan)
+                        .Include(c => c.TipClanarine)
+                        .Where(c => c.Status == StatusClanarine.AKTIVNA
+                                 && c.ObavjestenjePoslano == false
+                                 && c.DatumIsteka >= now
+                                 && c.DatumIsteka <= now.AddDays(7))
+                        .ToListAsync(stoppingToken);
+
+                    foreach (var clanarina in uskoroIsticu)
+                    {
+                        var postoji = await db.EmailObavjestenja
+                            .AnyAsync(e => e.ClanarinaId == clanarina.Id, stoppingToken);
+                        if (!postoji)
+                        {
+                            var poruka = $"Poštovani {clanarina.Clan?.Ime} {clanarina.Clan?.Prezime},<br><br>" +
+                                         $"Vaša članarina ({clanarina.TipClanarine?.Naziv}) ističe {clanarina.DatumIsteka:dd.MM.yyyy}.<br>" +
+                                         $"Molimo Vas da izvršite produženje kako biste nastavili koristiti naše usluge.<br><br>" +
+                                         $"S poštovanjem,<br>FitManager tim.";
+
+                            db.EmailObavjestenja.Add(new EmailObavjestenje
+                            {
+                                ClanarinaId = clanarina.Id,
+                                Sadrzaj = poruka,
+                                DatumSlanja = now,
+                                Status = StatusObavjestenja.NA_CEKANJU,
+                                PokusajSlanja = 0
+                            });
+                            clanarina.ObavjestenjePoslano = true;
+                        }
+                    }
+
+                    if (uskoroIsticu.Any())
+                        await db.SaveChangesAsync(stoppingToken);
+
                     var pending = await db.EmailObavjestenja
                         .Where(e => e.Status == StatusObavjestenja.NA_CEKANJU && e.PokusajSlanja < 5)
                         .OrderBy(e => e.DatumSlanja)

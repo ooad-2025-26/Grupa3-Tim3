@@ -81,6 +81,78 @@
     color: #222;
 }
 
-    .clanarina-info p {
+        .clanarina-info p {
         margin: 32px 0;
+    }
+
+.plans-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    margin-top: 80px;
+    flex-wrap: wrap;
+    padding: 0 40px 60px;
+}
+
+.plan-card {
+    width: 300px;
+    border: 3px solid #C5C408;
+    border-radius: 30px;
+    background-color: transparent;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.plan-title {
+    color: #000;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.plan-price {
+    margin-top: 40px;
+    color: #C5C408;
+    font-size: 46px;
+    font-weight: 700;
+}
+
+.plan-line {
+    width: 100%;
+    height: 2px;
+    background-color: #000;
+    margin-top: 30px;
+}
+
+.plan-features {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.plan-feature {
+    color: #333;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.kupi-button {
+    width: 140px;
+    height: 50px;
+    background-color: #C5C408;
+    color: #000;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .kupi-button:hover {
+        background-color: #dede12;
+        transform: scale(1.08);
+        box-shadow: 0 0 25px rgba(197, 196, 8, 0.5);
     }

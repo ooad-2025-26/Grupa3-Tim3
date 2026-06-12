@@ -1,67 +1,143 @@
 ﻿@model FitManager.Models.GrupniTrening
 
 @{
-    ViewData["Title"] = "Create";
+    Layout = null;
 }
 
-<h1>Create</h1>
+<link rel="stylesheet" href="~/css/rezervacija.css" />
 
-<h4>GrupniTrening</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Naziv" class="control-label"></label>
-                <input asp-for="Naziv" class="form-control" />
-                <span asp-validation-for="Naziv" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Opis" class="control-label"></label>
-                <input asp-for="Opis" class="form-control" />
-                <span asp-validation-for="Opis" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaksKapacitet" class="control-label"></label>
-                <input asp-for="MaksKapacitet" class="form-control" />
-                <span asp-validation-for="MaksKapacitet" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SlobodnaMjesta" class="control-label"></label>
-                <input asp-for="SlobodnaMjesta" class="form-control" />
-                <span asp-validation-for="SlobodnaMjesta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatumVrijeme" class="control-label"></label>
-                <input asp-for="DatumVrijeme" class="form-control" />
-                <span asp-validation-for="DatumVrijeme" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trajanje" class="control-label"></label>
-                <input asp-for="Trajanje" class="form-control" />
-                <span asp-validation-for="Trajanje" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipTreninga" class="control-label"></label>
-                <select asp-for="TipTreninga" class="form-control"></select>
-                <span asp-validation-for="TipTreninga" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrenerId" class="control-label"></label>
-                <select asp-for="TrenerId" class ="form-control" asp-items="ViewBag.TrenerId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div class="rezervacija-page">
+
+    <section class="top-section">
+        <a href="javascript:history.back()" class="back-button">←</a>
+        <h1>Kreiraj novi trening</h1>
+    </section>
+
+    <section style="max-width:600px;margin:30px auto;padding:0 20px;">
+        <div style="background:#fff;border-radius:16px;padding:32px;box-shadow:0 3px 12px rgba(0,0,0,0.06);">
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group-create">
+                    <label asp-for="Naziv">Naziv treninga</label>
+                    <input asp-for="Naziv" class="input-create" placeholder="npr. Jutarnji kardio" />
+                    <span asp-validation-for="Naziv" class="text-danger"></span>
+                </div>
+
+                <div class="form-group-create">
+                    <label asp-for="Opis">Opis</label>
+                    <textarea asp-for="Opis" class="input-create" rows="3" placeholder="Kratak opis treninga..."></textarea>
+                    <span asp-validation-for="Opis" class="text-danger"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group-create">
+                        <label asp-for="MaksKapacitet">Maksimalan broj mjesta</label>
+                        <input asp-for="MaksKapacitet" class="input-create" type="number" min="1" value="20" />
+                        <span asp-validation-for="MaksKapacitet" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group-create">
+                        <label asp-for="Trajanje">Trajanje (minuta)</label>
+                        <input asp-for="Trajanje" class="input-create" type="number" min="15" value="60" />
+                        <span asp-validation-for="Trajanje" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group-create">
+                        <label asp-for="DatumVrijeme">Datum i vrijeme</label>
+                        <input asp-for="DatumVrijeme" class="input-create" type="datetime-local" />
+                        <span asp-validation-for="DatumVrijeme" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group-create">
+                        <label asp-for="TipTreninga">Tip treninga</label>
+                        <select asp-for="TipTreninga" class="input-create" asp-items="ViewBag.Tipovi"></select>
+                        <span asp-validation-for="TipTreninga" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:12px;margin-top:24px;">
+                    <button type="submit" class="btn-submit-create">Kreiraj trening</button>
+                    <a href="/GrupniTrenings/Index" class="btn-cancel-create">Odustani</a>
+                </div>
+            </form>
+        </div>
+    </section>
+
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+<style>
+    .form-group-create {
+        margin-bottom: 18px;
+        flex: 1;
+    }
+    .form-group-create label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+    .input-create {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        font-size: 15px;
+        font-family: 'Poppins', sans-serif;
+        transition: border-color .2s;
+        box-sizing: border-box;
+    }
+    .input-create:focus {
+        outline: none;
+        border-color: #C5C408;
+    }
+    textarea.input-create { resize: vertical; }
+    .form-row {
+        display: flex;
+        gap: 16px;
+    }
+    .btn-submit-create {
+        flex: 1;
+        padding: 14px;
+        background: #C5C408;
+        color: #000;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .3s;
+        text-align: center;
+        text-decoration: none;
+    }
+    .btn-submit-create:hover {
+        background: #dede12;
+        transform: scale(1.02);
+    }
+    .btn-cancel-create {
+        padding: 14px 24px;
+        background: transparent;
+        color: #666;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .3s;
+        text-decoration: none;
+        text-align: center;
+    }
+    .btn-cancel-create:hover {
+        border-color: #999;
+        color: #000;
+    }
+    .text-danger { color: #c62828; font-size: 13px; }
+    @@media (max-width:500px) {
+        .form-row { flex-direction: column; }
+    }
+</style>

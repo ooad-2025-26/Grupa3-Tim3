@@ -1,71 +1,56 @@
 ﻿@model IEnumerable<FitManager.Models.Clanarina>
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = null;
+    ViewData["Title"] = "Članarine";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/admin.css" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumPocetka)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DatumIsteka)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cijena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ObavjestenjePoslano)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Clan)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipClanarine)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="admin-page">
+
+    <section class="top-section">
+        <a href="/Admin/Index" class="back-button">←</a>
+        <h1>Članarine</h1>
+    </section>
+
+    <div class="admin-toolbar">
+        <a href="/Clanarina/Create" class="admin-btn admin-btn-primary">+ Nova članarina</a>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.DatumPocetka)</th>
+                    <th>@Html.DisplayNameFor(model => model.DatumIsteka)</th>
+                    <th>@Html.DisplayNameFor(model => model.Cijena)</th>
+                    <th>@Html.DisplayNameFor(model => model.Status)</th>
+                    <th>@Html.DisplayNameFor(model => model.ObavjestenjePoslano)</th>
+                    <th>@Html.DisplayNameFor(model => model.Clan)</th>
+                    <th>@Html.DisplayNameFor(model => model.TipClanarine)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumPocetka)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatumIsteka)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cijena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ObavjestenjePoslano)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Clan.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipClanarine.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.DatumPocetka)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DatumIsteka)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Cijena)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ObavjestenjePoslano)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Clan.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TipClanarine.Naziv)</td>
+                    <td class="actions-cell">
+                        <a href="/Clanarina/Edit/@item.Id">Edit</a><span class="sep">|</span>
+                        <a href="/Clanarina/Details/@item.Id">Details</a><span class="sep">|</span>
+                        <a href="/Clanarina/Delete/@item.Id">Delete</a>
+                    </td>
+                </tr>
 }
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+
+</div>

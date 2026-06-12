@@ -349,7 +349,7 @@ namespace FitManager.Controllers
 
         /// <summary>
         /// DELETE /api/Api/reservation/{id}
-        /// Otkazuje rezervaciju i oslobađa mjesto.
+        /// Otkazuje rezervaciju i oslobađa mjesto (najkasnije 2 sata prije treninga).
         /// </summary>
         [HttpDelete("reservation/{id}")]
         public async Task<IActionResult> CancelReservation(int id)
@@ -362,6 +362,10 @@ namespace FitManager.Controllers
 
             if (rez.Status != StatusRezervacije.AKTIVNA)
                 return BadRequest(new { message = "Rezervacija nije aktivna." });
+
+            var satiDoTreninga = (rez.GrupniTrening.DatumVrijeme - DateTime.UtcNow).TotalHours;
+            if (satiDoTreninga < 2)
+                return BadRequest(new { message = "Ne možete otkazati rezervaciju manje od 2 sata prije treninga." });
 
             rez.Otkazi(DateTime.UtcNow);
 
@@ -465,6 +469,63 @@ namespace FitManager.Controllers
                 sedmicniPlan = plan.SedmicniPlan
             });
         }
+    // ────────────────────────────────────────────────────────────────────
+    // KREIRANJE TRENINGA (TRENER)
+    // ────────────────────────────────────────────────────────────────────
+
+    public class TrainingCreateDto
+    {
+        public string Naziv { get; set; } = string.Empty;
+        public string Opis { get; set; } = string.Empty;
+        public int MaksKapacitet { get; set; } = 20;
+        public int Trajanje { get; set; } = 60;
+        public DateTime DatumVrijeme { get; set; }
+        public string TipTreninga { get; set; } = "KARDIO";
+    }
+
+    [HttpPost("training/create")]
+    public async Task<IActionResult> CreateTraining([FromBody] TrainingCreateDto dto)
+    {
+        if (dto == null || string.IsNullOrWhiteSpace(dto.Naziv))
+            return BadRequest(new { message = "Naziv treninga je obavezan." });
+
+        if (dto.DatumVrijeme <= DateTime.UtcNow.AddMinutes(-1))
+            return BadRequest(new { message = "Datum i vrijeme moraju biti u budućnosti." });
+
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized(new { message = "Niste prijavljeni." });
+
+        if (!Enum.TryParse<TipTreninga>(dto.TipTreninga, out var tip))
+            return BadRequest(new { message = "Neispravan tip treninga." });
+
+        var trening = new GrupniTrening
+        {
+            Naziv = dto.Naziv,
+            Opis = dto.Opis ?? string.Empty,
+            MaksKapacitet = dto.MaksKapacitet > 0 ? dto.MaksKapacitet : 20,
+            SlobodnaMjesta = dto.MaksKapacitet > 0 ? dto.MaksKapacitet : 20,
+            Trajanje = dto.Trajanje > 0 ? dto.Trajanje : 60,
+            DatumVrijeme = dto.DatumVrijeme,
+            TipTreninga = tip,
+            TrenerId = userId
+        };
+
+        _context.GrupniTreninzi.Add(trening);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            id = trening.Id,
+            naziv = trening.Naziv,
+            opis = trening.Opis,
+            maksKapacitet = trening.MaksKapacitet,
+            slobodnaMjesta = trening.SlobodnaMjesta,
+            trajanje = trening.Trajanje,
+            datumVrijeme = trening.DatumVrijeme,
+            tipTreninga = trening.TipTreninga.ToString(),
+            trenerEmail = User.Identity?.Name ?? ""
+        });
     }
 
     // DTO za rezervaciju (umjesto da primamo cijeli model)
@@ -473,4 +534,5 @@ namespace FitManager.Controllers
         public string ClanId { get; set; } = string.Empty;
         public int GrupniTreningId { get; set; }
     }
+}
 }

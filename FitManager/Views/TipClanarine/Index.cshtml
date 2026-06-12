@@ -1,0 +1,48 @@
+@model IEnumerable<FitManager.Models.TipClanarine>
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Tipovi članarina";
+}
+
+<link rel="stylesheet" href="~/css/admin.css" />
+
+<div class="admin-page">
+
+    <section class="top-section">
+        <a href="/Admin/Index" class="back-button">←</a>
+        <h1>Tipovi članarina</h1>
+    </section>
+
+    <div class="admin-toolbar">
+        <a href="/TipClanarine/Create" class="admin-btn admin-btn-primary">+ Novi tip članarine</a>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Naziv)</th>
+                    <th>@Html.DisplayNameFor(model => model.TrajanjeDana)</th>
+                    <th>@Html.DisplayNameFor(model => model.Cijena)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+@foreach (var item in Model) {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Naziv)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TrajanjeDana)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Cijena) KM</td>
+                    <td class="actions-cell">
+                        <a href="/TipClanarine/Edit/@item.Id">Edit</a><span class="sep">|</span>
+                        <a href="/TipClanarine/Details/@item.Id">Details</a><span class="sep">|</span>
+                        <a href="/TipClanarine/Delete/@item.Id">Delete</a>
+                    </td>
+                </tr>
+}
+            </tbody>
+        </table>
+    </div>
+
+</div>

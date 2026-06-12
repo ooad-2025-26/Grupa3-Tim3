@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,11 +22,63 @@ namespace FitManager.Controllers
         }
 
 
-        // DODANO
-
-        public IActionResult MojaClanarina()
+        [Authorize]
+        public async Task<IActionResult> MojaClanarina()
         {
-            return View();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            var now = DateTime.UtcNow;
+
+            var aktivnaClanarina = await _context.Clanarine
+                .Include(c => c.TipClanarine)
+                .Where(c => c.ClanId == userId
+                         && c.Status == StatusClanarine.AKTIVNA
+                         && c.DatumIsteka >= now)
+                .OrderByDescending(c => c.DatumPocetka)
+                .FirstOrDefaultAsync();
+
+            if (aktivnaClanarina != null)
+            {
+                return View("MojaClanarina", aktivnaClanarina);
+            }
+
+            var tipovi = await _context.TipoviClanarine.ToListAsync();
+            ViewBag.Tipovi = tipovi;
+            return View("MojaClanarina");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Kupi(int tipClanarineId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            var tip = await _context.TipoviClanarine.FindAsync(tipClanarineId);
+            if (tip == null)
+                return NotFound();
+
+            var now = DateTime.UtcNow;
+
+            var clanarina = new Clanarina
+            {
+                ClanId = userId,
+                TipClanarineId = tipClanarineId,
+                DatumPocetka = now,
+                DatumIsteka = now.AddDays(tip.TrajanjeDana),
+                Cijena = tip.Cijena,
+                Status = StatusClanarine.AKTIVNA,
+                ObavjestenjePoslano = false
+            };
+
+            _context.Add(clanarina);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(MojaClanarina));
         }
         // GET: Clanarina
         public async Task<IActionResult> Index()
@@ -57,7 +111,7 @@ namespace FitManager.Controllers
         public IActionResult Create()
         {
             ViewData["ClanId"] = new SelectList(_context.Korisnici, "Id", "Email");
-            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Id");
+            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Naziv");
             return View();
         }
 
@@ -75,7 +129,7 @@ namespace FitManager.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ClanId"] = new SelectList(_context.Korisnici, "Id", "Email", clanarina.ClanId);
-            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Id", clanarina.TipClanarineId);
+            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Naziv", clanarina.TipClanarineId);
             return View(clanarina);
         }
 
@@ -93,7 +147,7 @@ namespace FitManager.Controllers
                 return NotFound();
             }
             ViewData["ClanId"] = new SelectList(_context.Korisnici, "Id", "Email", clanarina.ClanId);
-            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Id", clanarina.TipClanarineId);
+            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Naziv", clanarina.TipClanarineId);
             return View(clanarina);
         }
 
@@ -130,7 +184,7 @@ namespace FitManager.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ClanId"] = new SelectList(_context.Korisnici, "Id", "Email", clanarina.ClanId);
-            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Id", clanarina.TipClanarineId);
+            ViewData["TipClanarineId"] = new SelectList(_context.TipoviClanarine, "Id", "Naziv", clanarina.TipClanarineId);
             return View(clanarina);
         }
 

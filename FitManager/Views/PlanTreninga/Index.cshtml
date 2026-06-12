@@ -43,45 +43,48 @@
 
     <div class="content">
 
-        <div class="form-card">
-            <h2>Moj plan treninga</h2>
+        @if (!User.IsInRole("TRENER"))
+        {
+            <div class="form-card">
+                <h2>Moj plan treninga</h2>
 
-            <div class="form-group">
-                <label for="fitness-cilj">Fitness cilj</label>
-                <select id="fitness-cilj">
-                    <option value="0">Mršavljenje</option>
-                    <option value="1">Jačanje</option>
-                    <option value="2">Izdržljivost</option>
-                </select>
+                <div class="form-group">
+                    <label for="fitness-cilj">Fitness cilj</label>
+                    <select id="fitness-cilj">
+                        <option value="0">Mršavljenje</option>
+                        <option value="1">Jačanje</option>
+                        <option value="2">Izdržljivost</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bmi">BMI</label>
+                    <input type="number" step="0.01" id="bmi" placeholder="npr. 22.5" />
+                </div>
+
+                <div class="form-group">
+                    <label for="bmi-kategorija">BMI Kategorija</label>
+                    <select id="bmi-kategorija">
+                        <option value="0">Pothranjenost</option>
+                        <option value="1">Normalna težina</option>
+                        <option value="2">Prekomjerna težina</option>
+                        <option value="3">Gojaznost</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="intenzitet">Intenzitet</label>
+                    <select id="intenzitet">
+                        <option value="0">Početnik</option>
+                        <option value="1">Srednji</option>
+                        <option value="2">Napredni</option>
+                    </select>
+                </div>
+
+                <button type="button" id="create-plan-button" class="btn-kreiraj">Kreiraj plan</button>
+                <div id="plan-message"></div>
             </div>
-
-            <div class="form-group">
-                <label for="bmi">BMI</label>
-                <input type="number" step="0.01" id="bmi" placeholder="npr. 22.5" />
-            </div>
-
-            <div class="form-group">
-                <label for="bmi-kategorija">BMI Kategorija</label>
-                <select id="bmi-kategorija">
-                    <option value="0">Pothranjenost</option>
-                    <option value="1">Normalna težina</option>
-                    <option value="2">Prekomjerna težina</option>
-                    <option value="3">Gojaznost</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="intenzitet">Intenzitet</label>
-                <select id="intenzitet">
-                    <option value="0">Početnik</option>
-                    <option value="1">Srednji</option>
-                    <option value="2">Napredni</option>
-                </select>
-            </div>
-
-            <button type="button" id="create-plan-button" class="btn-kreiraj">Kreiraj plan</button>
-            <div id="plan-message"></div>
-        </div>
+        }
 
         <div id="plans-container">
             @if (!Model.Any())
@@ -94,6 +97,10 @@
                 {
                     <div class="plan-card">
                         <h3>@plan.FitnessCilj</h3>
+                        @if (User.IsInRole("TRENER") || User.IsInRole("ADMIN"))
+                        {
+                            <p><strong>Korisnik:</strong> @plan.Clan?.Email</p>
+                        }
                         <p><strong>BMI:</strong> @plan.Bmi</p>
                         <p><strong>Kategorija:</strong> @plan.BmiKategorija</p>
                         <p><strong>Intenzitet:</strong> @plan.Intenzitet</p>
@@ -108,11 +115,13 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const createButton = document.getElementById('create-plan-button');
-        const message = document.getElementById('plan-message');
         const plansContainer = document.getElementById('plans-container');
         const userId = '@userId';
 
+        const createButton = document.getElementById('create-plan-button');
+        const message = document.getElementById('plan-message');
+
+        if (createButton) {
         createButton.addEventListener('click', async function () {
             message.style.color = '';
             message.textContent = '';
@@ -194,6 +203,7 @@
                 createButton.disabled = false;
             }
         });
+        }
     });
     </script>
 

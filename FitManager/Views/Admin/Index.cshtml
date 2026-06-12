@@ -11,59 +11,146 @@
         <h1>Admin panel</h1>
     </section>
 
-    <section class="filter-section">
-        <h2>Odaberi vremenski period</h2>
-
-        <div class="filter-form">
-           
-            <input type="date" />
-            <button>Generiši izvještaj</button>
-        </div>
-    </section>
-
     <section class="stats-grid">
         <div class="stat-card">
             <span>Ukupni korisnici</span>
             <h3>@(ViewBag.Users ?? 0)</h3>
         </div>
-
         <div class="stat-card">
-            <span>Broj treninga</span>
+            <span>Aktivne članarine</span>
+            <h3>@(ViewBag.AktivneClanarine ?? 0)</h3>
+        </div>
+        <div class="stat-card">
+            <span>Tipovi članarina</span>
+            <h3>@(ViewBag.Tipovi ?? 0)</h3>
+        </div>
+        <div class="stat-card">
+            <span>Grupni treninzi</span>
             <h3>@(ViewBag.Trainings ?? 0)</h3>
         </div>
-
         <div class="stat-card">
-            <span>Broj rezervacija</span>
+            <span>Rezervacije</span>
             <h3>@(ViewBag.Reservations ?? 0)</h3>
+        </div>
+        <div class="stat-card">
+            <span>Planovi treninga</span>
+            <h3>@(ViewBag.Planovi ?? 0)</h3>
+        </div>
+    </section>
+
+    <section class="admin-links">
+        <h2>Upravljanje</h2>
+        <div class="links-grid">
+            <a href="/Korisnik/Index" class="admin-link-card">
+                <span class="link-icon">👥</span>
+                <span class="link-title">Korisnici</span>
+                <span class="link-desc">Pregled, izmjena i upravljanje korisnicima</span>
+            </a>
+            <a href="/Clanarina/Index" class="admin-link-card">
+                <span class="link-icon">💳</span>
+                <span class="link-title">Članarine</span>
+                <span class="link-desc">Pregled svih članarina i statusa</span>
+            </a>
+            <a href="/TipClanarine/Index" class="admin-link-card">
+                <span class="link-icon">🏷️</span>
+                <span class="link-title">Tipovi članarina</span>
+                <span class="link-desc">Konfiguracija cijena i trajanja</span>
+            </a>
+            <a href="/GrupniTrenings/Index" class="admin-link-card">
+                <span class="link-icon">🏋️</span>
+                <span class="link-title">Grupni treninzi</span>
+                <span class="link-desc">Kreiranje i upravljanje terminima</span>
+            </a>
+            <a href="/Rezervacija/Index" class="admin-link-card">
+                <span class="link-icon">📋</span>
+                <span class="link-title">Rezervacije</span>
+                <span class="link-desc">Pregled svih rezervacija treninga</span>
+            </a>
+            <a href="/PlanTreninga/Index" class="admin-link-card">
+                <span class="link-icon">📝</span>
+                <span class="link-title">Planovi treninga</span>
+                <span class="link-desc">Pregled kreiranih planova</span>
+            </a>
         </div>
     </section>
 
     <section class="admin-content">
         <div class="active-members">
             <h2>Najaktivniji članovi</h2>
-
-            <div class="member-row">
-                <span>adnan@email.com</span>
-                <strong>18 rezervacija</strong>
-            </div>
-
-            <div class="member-row">
-                <span>test@email.com</span>
-                <strong>14 rezervacija</strong>
-            </div>
+            @if (ViewBag.Najaktivniji is List<dynamic> naj && naj.Any())
+            {
+                foreach (var item in naj)
+                {
+                    <div class="member-row">
+                        <span>@item.Clan?.Email</span>
+                        <strong>@item.Broj rezervacija</strong>
+                    </div>
+                }
+            }
+            else
+            {
+                <p style="color:#888;">Nema podataka o rezervacijama.</p>
+            }
         </div>
 
         <div class="alerts-box">
-            <h2>Upozorenja</h2>
-
-            <div class="alert warning">
-                Nagli porast članarina u ovom periodu.
-            </div>
-
-            <div class="alert danger">
-                Pad broja rezervacija u odnosu na prethodni period.
+            <h2>Brze radnje</h2>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <a href="/GrupniTrenings/Create" class="admin-action-btn">+ Novi grupni trening</a>
+                <a href="/TipClanarine/Create" class="admin-action-btn">+ Novi tip članarine</a>
+                <a href="/Korisnik/Create" class="admin-action-btn">+ Novi korisnik</a>
             </div>
         </div>
     </section>
 
 </div>
+
+<style>
+    .admin-links {
+        padding: 0 30px 30px;
+    }
+    .admin-links h2 {
+        margin-bottom: 20px;
+    }
+    .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+    }
+    .admin-link-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        text-decoration: none;
+        color: #000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: .3s;
+        border: 2px solid transparent;
+    }
+    .admin-link-card:hover {
+        border-color: #C5C408;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .link-icon { font-size: 32px; }
+    .link-title { font-size: 18px; font-weight: 700; }
+    .link-desc { font-size: 13px; color: #888; }
+    .admin-action-btn {
+        display: block;
+        padding: 12px 16px;
+        background: #C5C408;
+        color: #000;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        text-align: center;
+        transition: .3s;
+    }
+    .admin-action-btn:hover {
+        background: #dede12;
+        transform: scale(1.03);
+    }
+</style>

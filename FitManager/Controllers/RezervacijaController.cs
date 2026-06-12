@@ -31,11 +31,21 @@ namespace FitManager.Controllers
                 return View();
             }
 
-            // ADMIN and TRENER can view the list of reservations
-            if (User.IsInRole("ADMIN") || User.IsInRole("TRENER"))
+            // TRENER and ADMIN can view the list of reservations with attendee counts
+            if (User.IsInRole("TRENER") || User.IsInRole("ADMIN"))
             {
-                var applicationDbContext = _context.Rezervacije.Include(r => r.Clan).Include(r => r.GrupniTrening);
-                return View(await applicationDbContext.ToListAsync());
+                var treninzi = await _context.GrupniTreninzi
+                    .Include(t => t.Trener)
+                    .OrderByDescending(t => t.DatumVrijeme)
+                    .ToListAsync();
+
+                var rezervacije = await _context.Rezervacije
+                    .Where(r => r.Status == StatusRezervacije.AKTIVNA)
+                    .GroupBy(r => r.GrupniTreningId)
+                    .ToDictionaryAsync(g => g.Key, g => g.Count());
+
+                ViewBag.RezervacijeCount = rezervacije;
+                return View("TrenerPregled", treninzi);
             }
 
             // other authenticated roles are forbidden from this page

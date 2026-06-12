@@ -135,11 +135,54 @@
                 const div  = document.createElement('div');
                 div.className = 'my-res-item';
                 const time = new Date(item.datumVrijeme).toLocaleString('bs');
-                div.innerHTML = `<strong>${item.naziv}</strong> — ${time}`;
+                const satiDoTreninga = (new Date(item.datumVrijeme) - new Date()) / 3600000;
+                const mozeOtkazati = satiDoTreninga >= 2;
+
+                div.innerHTML = `
+                    <div class="my-res-info">
+                        <strong>${item.naziv}</strong> — ${time}
+                    </div>
+                    <button class="cancel-btn"
+                            ${mozeOtkazati ? '' : 'disabled'}
+                            data-id="${item.id}">
+                        ${mozeOtkazati ? 'Otkaži' : '2h prije'}
+                    </button>
+                `;
+
+                if (mozeOtkazati) {
+                    div.querySelector('.cancel-btn').addEventListener('click', () => doCancel(item.id, div));
+                }
+
                 myResList.appendChild(div);
             });
         } catch (e) {
             myResList.innerHTML = '<p>Greška pri učitavanju.</p>';
+        }
+    }
+
+    // ── Otkaži rezervaciju ───────────────────────────────────────────────────
+    async function doCancel(reservationId, card) {
+        const btn = card.querySelector('.cancel-btn');
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        try {
+            const r = await fetch('/api/Api/reservation/' + reservationId, { method: 'DELETE' });
+            if (r.ok) {
+                showToast('Rezervacija otkazana.', true);
+                card.remove();
+                await loadMyReservations();
+                await onDayClick();
+            } else {
+                const data = await r.json().catch(() => null);
+                showToast((data && data.message) || 'Greška pri otkazivanju.', false);
+                btn.disabled = false;
+                btn.textContent = 'Otkaži';
+            }
+        } catch (e) {
+            showToast('Greška pri otkazivanju.', false);
+            btn.disabled = false;
+            btn.textContent = 'Otkaži';
         }
     }
 
@@ -209,7 +252,7 @@
                 <span class="slots${isFull ? ' full' : ''}">
                     Slobodna mjesta: <strong class="slots-count">${t.slobodnaMjesta}</strong>
                 </span>
-                <button class="reserve-btn btn btn-sm btn-primary"
+                <button class="btn-reserve"
                         ${isReserved || isFull ? 'disabled' : ''}>
                     ${isReserved ? 'Rezervisano' : isFull ? 'Puno' : 'Rezerviši'}
                 </button>
@@ -217,7 +260,7 @@
         `;
 
         if (!isReserved && !isFull) {
-            card.querySelector('.reserve-btn').addEventListener('click', () => doReserve(t, card));
+            card.querySelector('.btn-reserve').addEventListener('click', () => doReserve(t, card));
         }
 
         trainingsList.appendChild(card);
@@ -230,7 +273,7 @@
             return;
         }
 
-        const btn = card.querySelector('.reserve-btn');
+        const btn = card.querySelector('.btn-reserve');
         btn.disabled    = true;
         btn.textContent = '...';
 
@@ -265,7 +308,6 @@
                 if (slotsCount) slotsCount.textContent = newSlots;
 
                 btn.textContent = 'Rezervisano';
-                btn.classList.remove('btn-primary');
 
                 showToast('Rezervacija uspješna! ✓', true);
 

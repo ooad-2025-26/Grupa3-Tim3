@@ -26,10 +26,22 @@ namespace FitManager.Controllers
             if (string.IsNullOrEmpty(userId))
                 return RedirectToAction("Login", "Account", new { area = "Identity" });
 
-            var planovi = await _context.PlanoviTreninga
-                .Where(p => p.ClanId == userId)
-                .OrderByDescending(p => p.DatumKreiranja)
-                .ToListAsync();
+            List<PlanTreninga> planovi;
+
+            if (User.IsInRole("TRENER") || User.IsInRole("ADMIN"))
+            {
+                planovi = await _context.PlanoviTreninga
+                    .Include(p => p.Clan)
+                    .OrderByDescending(p => p.DatumKreiranja)
+                    .ToListAsync();
+            }
+            else
+            {
+                planovi = await _context.PlanoviTreninga
+                    .Where(p => p.ClanId == userId)
+                    .OrderByDescending(p => p.DatumKreiranja)
+                    .ToListAsync();
+            }
 
             return View(planovi);
         }

@@ -1,0 +1,416 @@
+@model IEnumerable<FitManager.Models.GrupniTrening>
+
+@{
+    Layout = null;
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
+    var rezCount = ViewBag.RezervacijeCount as Dictionary<int, int> ?? new();
+}
+
+<link rel="stylesheet" href="~/css/rezervacija.css" />
+
+<div class="rezervacija-page">
+
+    <section class="top-section">
+        <a href="@Url.Action("Index", "Home")" class="back-button">←</a>
+        <h1>Pregled rezervacija</h1>
+    </section>
+
+    <div style="padding: 20px 24px 0;text-align:right;">
+        <button id="otvoriModalBtn" class="kreiraj-trening-btn">+ Kreiraj novi trening</button>
+    </div>
+
+    <section style="padding: 30px 24px;">
+        @if (!Model.Any())
+        {
+            <p style="text-align:center;color:#888;padding:40px;">Nema zakazanih treninga.</p>
+        }
+        else
+        {
+            <div id="trainings-list">
+            @foreach (var t in Model)
+            {
+                var broj = rezCount.TryGetValue(t.Id, out var cnt) ? cnt : 0;
+                var popunjenost = t.MaksKapacitet > 0 ? (broj * 100 / t.MaksKapacitet) : 0;
+                <div class="trener-training-card">
+                    <div class="trener-training-header">
+                        <h3>@t.Naziv</h3>
+                        <span class="trener-training-date">
+                            @t.DatumVrijeme.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                        </span>
+                    </div>
+                    <div class="trener-training-body">
+                        <p><strong>Trener:</strong> @t.Trener?.Email</p>
+                        <p><strong>Tip:</strong> @t.TipTreninga</p>
+                        @if (!string.IsNullOrEmpty(t.Opis))
+                        {
+                            <p class="trener-opis">@t.Opis</p>
+                        }
+                        <div class="trener-stats">
+                            <div class="trener-stat">
+                                <span class="trener-stat-number">@broj</span>
+                                <span class="trener-stat-label">prijavljenih</span>
+                            </div>
+                            <div class="trener-stat">
+                                <span class="trener-stat-number">@(t.MaksKapacitet - t.SlobodnaMjesta)</span>
+                                <span class="trener-stat-label">od @t.MaksKapacitet mjesta</span>
+                            </div>
+                            <div class="trener-stat">
+                                <span class="trener-stat-number">@popunjenost%</span>
+                                <span class="trener-stat-label">popunjenost</span>
+                            </div>
+                        </div>
+                        <div class="trener-bar">
+                            <div class="trener-bar-fill" style="width:@popunjenost%;"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+        }
+    </section>
+
+</div>
+
+<!-- MODAL -->
+<div id="kreirajModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <button class="modal-close-btn" onclick="zatvoriModal()">×</button>
+        <h2>Kreiraj novi trening</h2>
+
+        <form id="kreirajForm" onsubmit="return false;">
+            <label>Naziv treninga</label>
+            <select id="t-naziv" class="modal-input">
+                <option value="Jutarnji kardio">Jutarnji kardio</option>
+                <option value="Trening snage">Trening snage</option>
+                <option value="Joga za početnike">Joga za početnike</option>
+                <option value="HIIT trening">HIIT trening</option>
+                <option value="Pilates">Pilates</option>
+                <option value="Funkcionalni trening">Funkcionalni trening</option>
+                <option value="Večernje istezanje">Večernje istezanje</option>
+            </select>
+
+            <label>Tip treninga</label>
+            <select id="t-tip" class="modal-input">
+                <option value="KARDIO">Kardio</option>
+                <option value="SNAGA">Snaga</option>
+                <option value="JOGA">Joga</option>
+                <option value="PILATES">Pilates</option>
+            </select>
+
+            <div class="modal-row">
+                <div>
+                    <label>Maksimalno mjesta</label>
+                    <select id="t-kapacitet" class="modal-input">
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20" selected>20</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Trajanje (min)</label>
+                    <select id="t-trajanje" class="modal-input">
+                        <option value="30">30 min</option>
+                        <option value="45">45 min</option>
+                        <option value="60" selected>60 min</option>
+                        <option value="90">90 min</option>
+                    </select>
+                </div>
+            </div>
+
+            <label>Datum i vrijeme</label>
+            <input id="t-datum" type="datetime-local" class="modal-input" required />
+
+            <label>Opis (opciono)</label>
+            <textarea id="t-opis" class="modal-input" rows="2" placeholder="Kratak opis..."></textarea>
+
+            <button type="button" id="submitTrening" class="modal-submit-btn">Kreiraj trening</button>
+            <div id="modal-msg" style="margin-top:10px;font-weight:600;min-height:24px;"></div>
+        </form>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script>
+    const modal = document.getElementById('kreirajModal');
+    const toast = document.getElementById('toast');
+
+    document.getElementById('otvoriModalBtn').addEventListener('click', otvoriModal);
+
+    function otvoriModal() {
+        modal.style.display = 'flex';
+        document.getElementById('t-datum').value = '';
+        document.getElementById('t-opis').value = '';
+        document.getElementById('modal-msg').textContent = '';
+    }
+
+    function zatvoriModal() {
+        modal.style.display = 'none';
+    }
+
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) zatvoriModal();
+    });
+
+    document.getElementById('submitTrening').addEventListener('click', async function () {
+        const btn = this;
+        const msg = document.getElementById('modal-msg');
+        msg.textContent = '';
+        msg.style.color = '';
+
+        const naziv = document.getElementById('t-naziv').value;
+        const tip = document.getElementById('t-tip').value;
+        const kapacitet = parseInt(document.getElementById('t-kapacitet').value);
+        const trajanje = parseInt(document.getElementById('t-trajanje').value);
+        const datum = document.getElementById('t-datum').value;
+        const opis = document.getElementById('t-opis').value;
+
+        if (!datum) {
+            msg.style.color = 'red';
+            msg.textContent = 'Odaberi datum i vrijeme.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        try {
+            const res = await fetch('/api/Api/training/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    naziv: naziv,
+                    opis: opis,
+                    maksKapacitet: kapacitet,
+                    trajanje: trajanje,
+                    datumVrijeme: new Date(datum).toISOString(),
+                    tipTreninga: tip
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                msg.style.color = 'red';
+                msg.textContent = data.message || 'Greška pri kreiranju.';
+                btn.disabled = false;
+                btn.textContent = 'Kreiraj trening';
+                return;
+            }
+
+            msg.style.color = 'green';
+            msg.textContent = '✓ Trening uspješno kreiran!';
+
+            setTimeout(() => {
+                zatvoriModal();
+                location.reload();
+            }, 1000);
+
+        } catch (e) {
+            msg.style.color = 'red';
+            msg.textContent = 'Greška sa serverom.';
+            btn.disabled = false;
+            btn.textContent = 'Kreiraj trening';
+        }
+    });
+
+    function showToast(text, ok) {
+        toast.textContent = text;
+        toast.style.background = ok ? '#0b6623' : '#b00020';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+</script>
+
+<style>
+    .kreiraj-trening-btn {
+        display: inline-block;
+        padding: 12px 28px;
+        background: #C5C408;
+        color: #000;
+        text-decoration: none;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .3s;
+    }
+    .kreiraj-trening-btn:hover {
+        background: #dede12;
+        transform: scale(1.06);
+        box-shadow: 0 0 20px rgba(197,196,8,0.4);
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    .modal-box {
+        background: #fff;
+        border-radius: 20px;
+        padding: 32px;
+        width: 480px;
+        max-width: 94%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .modal-box h2 {
+        margin: 0 0 20px;
+        font-size: 24px;
+    }
+    .modal-close-btn {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #888;
+    }
+    .modal-box label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin: 12px 0 4px;
+    }
+    .modal-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 15px;
+        font-family: 'Poppins', sans-serif;
+        box-sizing: border-box;
+    }
+    .modal-input:focus {
+        outline: none;
+        border-color: #C5C408;
+    }
+    .modal-row {
+        display: flex;
+        gap: 14px;
+    }
+    .modal-row > div {
+        flex: 1;
+    }
+    .modal-submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: #C5C408;
+        color: #000;
+        border: none;
+        border-radius: 12px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 18px;
+        transition: .3s;
+    }
+    .modal-submit-btn:hover {
+        background: #dede12;
+    }
+    .modal-submit-btn:disabled {
+        opacity: 0.6;
+    }
+
+    .trener-training-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        border-left: 5px solid #C5C408;
+    }
+    .trener-training-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .trener-training-header h3 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+    .trener-training-date {
+        color: #666;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .trener-training-body p {
+        margin: 4px 0;
+        font-size: 14px;
+        color: #444;
+    }
+    .trener-opis {
+        color: #666 !important;
+        font-style: italic;
+        margin-top: 6px !important;
+    }
+    .trener-stats {
+        display: flex;
+        gap: 24px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+    }
+    .trener-stat {
+        text-align: center;
+        background: #f7f7f7;
+        padding: 10px 18px;
+        border-radius: 12px;
+        min-width: 100px;
+    }
+    .trener-stat-number {
+        display: block;
+        font-size: 24px;
+        font-weight: 700;
+        color: #000;
+    }
+    .trener-stat-label {
+        font-size: 12px;
+        color: #888;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+    .trener-bar {
+        height: 8px;
+        background: #eee;
+        border-radius: 4px;
+        margin-top: 14px;
+        overflow: hidden;
+    }
+    .trener-bar-fill {
+        height: 100%;
+        background: #C5C408;
+        border-radius: 4px;
+        transition: width .3s;
+    }
+    .toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: #222;
+        color: #fff;
+        padding: 14px 20px;
+        border-radius: 10px;
+        display: none;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        font-weight: 500;
+        z-index: 99999;
+    }
+    .toast.show { display: block; }
+</style>

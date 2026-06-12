@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ using FitManager.Models;
 
 namespace FitManager.Controllers
 {
+    [Route("GrupniTrenings")]
     public class GrupniTreningController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,7 +26,7 @@ namespace FitManager.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.GrupniTreninzi.Include(g => g.Trener);
-            return View(await applicationDbContext.ToListAsync());
+            return View("~/Views/GrupniTrenings/Index.cshtml", await applicationDbContext.ToListAsync());
         }
 
         // GET: GrupniTrenings/Details/5
@@ -42,41 +45,53 @@ namespace FitManager.Controllers
                 return NotFound();
             }
 
-            return View(grupniTrening);
+            return View("~/Views/GrupniTrenings/Details.cshtml", grupniTrening);
         }
 
         // GET: GrupniTrenings/Create
+        [Authorize(Roles = "ADMIN,TRENER")]
         public IActionResult Create()
         {
-            ViewData["TrenerId"] = new SelectList(_context.Korisnici, "Id", "Email");
-            return View();
+            ViewBag.Tipovi = new List<SelectListItem>
+            {
+                new SelectListItem("Kardio", "KARDIO"),
+                new SelectListItem("Snaga", "SNAGA"),
+                new SelectListItem("Joga", "JOGA"),
+                new SelectListItem("Pilates", "PILATES"),
+            };
+            return View("~/Views/GrupniTrenings/Create.cshtml", new GrupniTrening());
         }
 
         // POST: GrupniTrenings/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Naziv,Opis,MaksKapacitet,SlobodnaMjesta,DatumVrijeme,Trajanje,TipTreninga,TrenerId")] GrupniTrening grupniTrening)
+        [Authorize(Roles = "ADMIN,TRENER")]
+        public async Task<IActionResult> Create([Bind("Naziv,Opis,MaksKapacitet,DatumVrijeme,Trajanje,TipTreninga")] GrupniTrening grupniTrening)
         {
             if (ModelState.IsValid)
             {
-                // Ensure initial available slots are consistent
-                if (grupniTrening.SlobodnaMjesta <= 0)
-                {
-                    grupniTrening.SlobodnaMjesta = grupniTrening.MaksKapacitet;
-                }
-                if (grupniTrening.SlobodnaMjesta > grupniTrening.MaksKapacitet)
-                {
-                    grupniTrening.SlobodnaMjesta = grupniTrening.MaksKapacitet;
-                }
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized();
+
+                grupniTrening.TrenerId = userId;
+                grupniTrening.SlobodnaMjesta = grupniTrening.MaksKapacitet;
 
                 _context.Add(grupniTrening);
                 await _context.SaveChangesAsync();
+
+                if (User.IsInRole("TRENER"))
+                    return RedirectToAction("Index", "Rezervacija");
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TrenerId"] = new SelectList(_context.Korisnici, "Id", "Email", grupniTrening.TrenerId);
-            return View(grupniTrening);
+            ViewBag.Tipovi = new List<SelectListItem>
+            {
+                new SelectListItem("Kardio", "KARDIO"),
+                new SelectListItem("Snaga", "SNAGA"),
+                new SelectListItem("Joga", "JOGA"),
+                new SelectListItem("Pilates", "PILATES"),
+            };
+            return View("~/Views/GrupniTrenings/Create.cshtml", grupniTrening);
         }
 
         // GET: GrupniTrenings/Edit/5
@@ -93,7 +108,7 @@ namespace FitManager.Controllers
                 return NotFound();
             }
             ViewData["TrenerId"] = new SelectList(_context.Korisnici, "Id", "Email", grupniTrening.TrenerId);
-            return View(grupniTrening);
+            return View("~/Views/GrupniTrenings/Edit.cshtml", grupniTrening);
         }
 
         // POST: GrupniTrenings/Edit/5
@@ -133,7 +148,7 @@ namespace FitManager.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["TrenerId"] = new SelectList(_context.Korisnici, "Id", "Email", grupniTrening.TrenerId);
-            return View(grupniTrening);
+            return View("~/Views/GrupniTrenings/Edit.cshtml", grupniTrening);
         }
 
         // GET: GrupniTrenings/Delete/5
@@ -152,7 +167,7 @@ namespace FitManager.Controllers
                 return NotFound();
             }
 
-            return View(grupniTrening);
+            return View("~/Views/GrupniTrenings/Delete.cshtml", grupniTrening);
         }
 
         // POST: GrupniTrenings/Delete/5
